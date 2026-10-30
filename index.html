@@ -405,6 +405,29 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 :root[data-theme="light"] .coach-outside{color:#8c4737!important}
 @media(max-width:1000px){#laboratorio #seqRows{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){#laboratorio{padding:17px}#laboratorio>.inner{grid-template-columns:minmax(0,1fr);gap:14px}#laboratorio .seq-paste,#laboratorio .seq-rhythm,#laboratorio #seqRows,#laboratorio .seq-sound{grid-column:1;grid-row:auto}#laboratorio .seq-sound{order:5}#laboratorio .seq-footer{order:4}#laboratorio .harmony-coach{order:6}#laboratorio .seq-state{order:7}#laboratorio #seqRows input[data-field=chord]{font-size:24px}.coach-suggestions{grid-template-columns:minmax(0,1fr)}.harmony-coach{padding:15px}.coach-head select{max-width:100%}#laboratorio .transport{flex-wrap:wrap}}
+</style><style>
+#laboratorio .coach-context-picker{padding:0;margin-top:16px;border-radius:14px;background:#ffffff05;border:1px solid #b4dae12d}
+#laboratorio .coach-context-picker summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 15px;list-style:none;font-size:12px;cursor:pointer}
+.coach-context-picker summary::-webkit-details-marker{display:none}
+.coach-context-picker summary:after{content:"⌄";font-size:16px;color:var(--muted)}
+#coachContextLabel{margin-left:auto;font-size:11px;color:var(--muted)}
+.coach-picker-body{padding:0 15px 16px}
+.coach-picker-label{margin:12px 0 9px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.coach-root-buttons{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px}
+.coach-mode-buttons{display:flex;gap:7px;flex-wrap:wrap}
+#laboratorio .coach-root-buttons button,#laboratorio .coach-mode-buttons button,#laboratorio .coach-auto{min-height:38px;border:1px solid #b4dae133;background:#ffffff07;border-radius:10px;color:var(--ink);padding:8px 12px;cursor:pointer;font-size:12px}
+#laboratorio .coach-root-buttons button{padding:8px 2px}
+#laboratorio .coach-auto{border-radius:999px}
+#laboratorio .coach-root-buttons button[aria-pressed=true],#laboratorio .coach-mode-buttons button[aria-pressed=true],#laboratorio .coach-auto[aria-pressed=true]{background:#06d7a020;border-color:#06d7a080;color:#c7fff0}
+.coach-step-label{margin:18px 0 10px;font-size:11px;color:var(--muted)}
+.coach-step-buttons{display:flex;flex-wrap:wrap;gap:8px}
+#laboratorio .coach-step-buttons button{display:flex;align-items:center;gap:9px;border:1px solid #b4dae12d;border-radius:12px;min-height:44px;background:#ffffff05;color:var(--ink);padding:10px 13px;cursor:pointer;max-width:100%}
+.coach-step-buttons button small{font-size:10px;color:var(--muted);font-family:var(--font-mono)}
+.coach-step-buttons button b{font-size:14px;font-weight:500;overflow-wrap:anywhere}
+#laboratorio .coach-step-buttons button[aria-pressed=true]{border-color:#06d7a0;background:#06d7a014;box-shadow:inset 0 -2px #06d7a0}
+:root[data-theme=light] #laboratorio .coach-root-buttons button,:root[data-theme=light] #laboratorio .coach-mode-buttons button,:root[data-theme=light] #laboratorio .coach-auto,:root[data-theme=light] #laboratorio .coach-step-buttons button{color:#173f4c;border-color:#b3ced4;background:#ffffff70}
+:root[data-theme=light] #laboratorio .coach-root-buttons button[aria-pressed=true],:root[data-theme=light] #laboratorio .coach-mode-buttons button[aria-pressed=true],:root[data-theme=light] #laboratorio .coach-auto[aria-pressed=true],:root[data-theme=light] #laboratorio .coach-step-buttons button[aria-pressed=true]{background:#cdf3e8;border-color:#348a79;color:#134a40}
+@media(max-width:650px){.coach-root-buttons{grid-template-columns:repeat(6,minmax(0,1fr))}.coach-mode-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#laboratorio .coach-mode-buttons button{font-size:11px;padding:9px 6px}.coach-step-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#laboratorio .coach-step-buttons button{padding:9px 10px}#coachContextLabel{max-width:55%;text-align:right}.coach-head{align-items:center}}
 </style></head>
 <body>
 <div class="space-shell">
@@ -509,7 +532,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
  </fieldset><p class="seq-help">El piano toca juntas las notas del acorde; el arpa las recorre sobre un pad suave. La mezcla se puede ajustar mientras escuchas.</p>
  </details><div class="seq-rhythm"><label>Compás<select id="seqMeter"><option value="4/4">4/4</option><option value="3/4">3/4</option><option value="6/8">6/8</option></select></label><span id="seqMeterHint">Negra = BPM · 4 pulsos por compás</span></div><ol class="seq-list" id="seqRows" aria-label="Acordes de la progresión"></ol>
   <div class="seq-footer"><div class="transport"><button class="lab-btn" id="seqAdd" type="button">+ Añadir acorde</button><button class="lab-btn" id="seqCurrent" type="button">+ Acorde del buscador</button></div><div class="transport"><label for="seqBpm">Tempo <input id="seqBpm" type="number" min="20" max="300" step="1" value="80"> BPM</label><label><input id="seqLoop" type="checkbox"> Repetir</label><button class="lab-btn primary" id="seqPlay" type="button">▶ Reproducir</button><button class="lab-btn" id="seqStop" type="button" disabled>■ Detener</button></div></div>
-  <section class="harmony-coach" aria-labelledby="coachTitle"><div class="coach-head"><div><div class="eyebrow">Brújula armónica</div><h3 id="coachTitle">Encuentra tu siguiente paso</h3></div><label>Contexto<select id="coachContext"><option value="">Explorar posibilidades</option></select></label></div><p id="coachReading"></p><label class="coach-step-label">Analizar acorde<select id="coachStep"></select></label><div id="coachSuggestions" class="coach-suggestions"></div><small>Las funciones dependen de la progresión. Los colores y descripciones son orientativos; escucha las alternativas antes de elegir.</small></section><p class="seq-state" id="seqStatus" role="status" aria-live="polite">Lista para escuchar. Piano y arpa sintetizados con pad; la progresión usa su propio registro de notas.</p>
+  <section class="harmony-coach" aria-labelledby="coachTitle"><div class="coach-head"><div><div class="eyebrow">Brújula armónica</div><h3 id="coachTitle">Encuentra tu siguiente paso</h3></div><button type="button" class="coach-auto" id="coachAuto" aria-pressed="true">✦ Automático</button></div><details class="coach-context-picker"><summary><span>Tonalidad y modo</span><span id="coachContextLabel">Explorar posibilidades</span></summary><div class="coach-picker-body"><div class="coach-picker-label">Centro tonal</div><div id="coachRootButtons" class="coach-root-buttons" role="group" aria-label="Centro tonal"></div><div class="coach-picker-label">Modo</div><div id="coachModeButtons" class="coach-mode-buttons" role="group" aria-label="Modo"></div></div></details><select id="coachContext" hidden aria-hidden="true" tabindex="-1"><option value="">Explorar posibilidades</option></select><p id="coachReading"></p><div class="coach-step-label">Analizar acorde</div><div id="coachStepButtons" class="coach-step-buttons" role="group" aria-label="Acorde para analizar"></div><select id="coachStep" hidden aria-hidden="true" tabindex="-1"></select><div id="coachSuggestions" class="coach-suggestions"></div><small>Las funciones dependen de la progresión. Los colores y descripciones son orientativos; escucha las alternativas antes de elegir.</small></section><p class="seq-state" id="seqStatus" role="status" aria-live="polite">Lista para escuchar. Piano y arpa sintetizados con pad; la progresión usa su propio registro de notas.</p>
  </div>
 </section>
 <footer class="space-footer">Mapa de Acordes · Explora el universo de la armonía</footer>
@@ -1326,10 +1349,20 @@ function coachCandidates(rows){
  }
  return result.sort((a,b)=>b.score-a.score);
 }
+function renderCoachControls(){
+ const selected=$('coachContext').value;
+ const [root,id]=(selected||'0:major').split(':');
+ $('coachAuto').setAttribute('aria-pressed',String(!selected));
+ $('coachContextLabel').textContent=selected?pitchLabel(+root)+' · '+(COACH_MODES.find(m=>m[0]===id)?.[1]||id):'Automático';
+ $('coachRootButtons').innerHTML=pitchNames.map((n,i)=>'<button type="button" data-coach-root="'+i+'" aria-pressed="'+(!!selected&&i===+root)+'">'+pitchLabel(i)+'</button>').join('');
+ $('coachModeButtons').innerHTML=COACH_MODES.map(m=>'<button type="button" data-coach-mode="'+m[0]+'" aria-pressed="'+(!!selected&&id===m[0])+'">'+esc(m[1].split(' · ')[0])+'</button>').join('');
+ $('coachStepButtons').innerHTML=seqDraft.map((r,i)=>'<button type="button" data-coach-step="'+i+'" aria-pressed="'+(i===Number($('coachStep').value))+'"><small>'+String(i+1).padStart(2,'0')+'</small><b>'+esc(r.chord)+'</b></button>').join('')||'<span>Añade un acorde para comenzar.</span>';
+}
 function renderCoach(){
  const step=$('coachStep'),old=Number(step.value)||0;
  step.innerHTML=seqDraft.map((r,i)=>'<option value="'+i+'">'+(i+1)+'. '+esc(r.chord)+'</option>').join('');
  step.value=String(Math.min(old,Math.max(0,seqDraft.length-1)));
+ renderCoachControls();
  const row=seqDraft[Number(step.value)],parsed=row&&parseChord(row.chord);
  const candidates=coachCandidates(seqDraft),context=$('coachContext').value;
  let chosen=null;
@@ -1351,6 +1384,10 @@ function renderCoach(){
 }
 $('coachContext').innerHTML='<option value="">Explorar posibilidades</option>'+pitchNames.map((n,root)=>'<optgroup label="'+n+'">'+COACH_MODES.map(mode=>'<option value="'+root+':'+mode[0]+'">'+n+' '+mode[1]+'</option>').join('')+'</optgroup>').join('');
 $('coachContext').addEventListener('change',renderCoach);
+$('coachAuto').addEventListener('click',()=>{$('coachContext').value='';renderCoach();});
+$('coachRootButtons').addEventListener('click',e=>{const b=e.target.closest('[data-coach-root]');if(!b)return;const mode=$('coachContext').value.split(':')[1]||'major';$('coachContext').value=b.dataset.coachRoot+':'+mode;renderCoach();});
+$('coachModeButtons').addEventListener('click',e=>{const b=e.target.closest('[data-coach-mode]');if(!b)return;const root=$('coachContext').value.split(':')[0]||'0';$('coachContext').value=root+':'+b.dataset.coachMode;renderCoach();});
+$('coachStepButtons').addEventListener('click',e=>{const b=e.target.closest('[data-coach-step]');if(!b)return;$('coachStep').value=b.dataset.coachStep;renderCoach();});
 $('coachStep').addEventListener('change',renderCoach);
 $('coachSuggestions').addEventListener('click',e=>{
  const add=e.target.closest('[data-coach-add]'),preview=e.target.closest('[data-coach-preview]'),note=e.target.closest('[data-coach-note]');
