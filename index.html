@@ -846,14 +846,24 @@ function playTone(bus,midi,time,duration,kind,amplitude,tail=0,attackSeconds=nul
   const partials=kind==='pad'?[[1,1,'triangle'],[2,.08,'sine']]:kind==='harp'?[[1,1,'sine'],[2,.28,'sine'],[3,.08,'sine']]:[[1,1,'sine'],[2,.3,'sine'],[3,.1,'sine'],[4,.035,'sine']];
   partials.forEach(([harmonic,weight,type],i)=>{
     const o=c.createOscillator(),env=c.createGain();o.type=type;o.frequency.value=440*Math.pow(2,(midi-69)/12)*harmonic;
-    const attack=Math.min(attackSeconds??(kind==='pad'?.3:(tail>0?.018:.009)),duration*.2),release=tail>0?tail:Math.min(kind==='pad'?.22:.08,duration*.25),peak=amplitude*weight;
-    env.gain.setValueAtTime(.00001,time);
-    if(attackSeconds!==null)env.gain.linearRampToValueAtTime(Math.max(.00002,peak),time+attack);
-    else env.gain.exponentialRampToValueAtTime(Math.max(.00002,peak),time+attack);
+    const attack=Math.min(attackSeconds??(kind==='pad'?.045:(tail>0?.018:.009)),duration*.2),release=tail>0?tail:Math.min(kind==='pad'?.22:.08,duration*.25),peak=amplitude*weight;
     const sustainTime=Math.max(time+attack,end-release);
-    if(kind==='pad')env.gain.setValueAtTime(Math.max(.00002,peak*.85),sustainTime);
-    else env.gain.exponentialRampToValueAtTime(Math.max(.00002,peak*(kind==='harp'?.02:.1)/(1+i)),sustainTime);
-    env.gain.exponentialRampToValueAtTime(.00001,end);
+    if(kind==='pad'){
+      // Smooth curves begin at the chord boundary, with no delayed swell.
+      const rise=new Float32Array(48),fall=new Float32Array(64);
+      for(let j=0;j<rise.length;j++){const x=j/(rise.length-1);rise[j]=.00001+(Math.max(.00002,peak)-.00001)*(1-Math.cos(Math.PI*x))/2;}
+      const held=Math.max(.00002,peak*.85);
+      for(let j=0;j<fall.length;j++){const x=j/(fall.length-1);fall[j]=.00001+(held-.00001)*(1+Math.cos(Math.PI*x))/2;}
+      env.gain.setValueCurveAtTime(rise,time,attack);
+      env.gain.linearRampToValueAtTime(held,sustainTime);
+      env.gain.setValueCurveAtTime(fall,sustainTime,end-sustainTime);
+    }else{
+      env.gain.setValueAtTime(.00001,time);
+      if(attackSeconds!==null)env.gain.linearRampToValueAtTime(Math.max(.00002,peak),time+attack);
+      else env.gain.exponentialRampToValueAtTime(Math.max(.00002,peak),time+attack);
+      env.gain.exponentialRampToValueAtTime(Math.max(.00002,peak*(kind==='harp'?.02:.1)/(1+i)),sustainTime);
+      env.gain.exponentialRampToValueAtTime(.00001,end);
+    }
     o.connect(env);env.connect(bus.layers[kind]);bus.voices.add(o);o.onended=()=>{bus.voices.delete(o);o.disconnect();env.disconnect();};o.start(time);o.stop(end+.01);
   });
 }
@@ -1204,11 +1214,12 @@ function scheduleSequenceChord(run,notes,time,duration,connect=true,arpCore=note
   if(!notes.length)return;const n=Math.sqrt(notes.length);
   // A short release overlaps the next attack without moving the beat.
   const tail=connect?Math.min(.32,duration*.3):0;
+  const padTail=connect?Math.min(.42,duration*.4):0;
   const corePcs=new Set(arpCore.map(m=>m%12));
   notes.forEach(m=>{
     const color=!corePcs.has(m%12);
     playTone(run,m,time,Math.min(duration,3.5),'piano',(color?.055:.14)/n,tail*.7,color?.008:null);
-    playTone(run,m,time,duration,'pad',(color?.048:.04)/n,tail,color?.008:null);
+    playTone(run,m,time,duration,'pad',(color?.048:.04)/n,padTail,.045);
   });
   const settings=soundSettings();run.arps.push(...planArpeggio(notes,time,duration,run.bpm*($('seqMeter').value==='6/8'?1.5:1),settings.pattern,settings.rate,arpCore));
 }
