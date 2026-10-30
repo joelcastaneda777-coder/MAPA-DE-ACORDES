@@ -1,0 +1,96 @@
+/* Cosmic Bento · soft cosmic refresh and mobile keyboard */
+:root,:root[data-theme="light"]{
+--bg:#0c2838;--surface:#153749;--ink:#f7fbfd;--muted:#d3e2e9;--line:#356174;
+--hinge:#163a4e;--hinge-ink:#f9fcff;--hinge-muted:#d0e1e8;--hinge-field:#194153;--hinge-line:#41677a;
+--c-root:#F04770;--c-3:#F78C6A;--c-5:#FFD167;--c-7:#06D7A0;--c-ext:#108AB1;--on-tone:#061e28;
+}
+body{background:#0b2736}
+.workspace{background:radial-gradient(ellipse 560px 340px at 96% 0%,#2360788a,transparent 80%),linear-gradient(180deg,#0d2b3d,#0a2635 70%);}
+.sidebar{background:#102e41;border-color:#345468}
+.sidebar-note{background:radial-gradient(circle at 80% 12%,#2e7181,#153b50 60%,#173749);border-color:#396778}
+.sidebar .side-nav a{color:#d1e0e8}.sidebar .side-nav a.active{color:#111e2a}
+.mission-hero{background:linear-gradient(110deg,#164155a8,#12405a66 68%,#15495c33);border:1px solid #346779}
+.mission-hero:before{top:-310px;right:-35px;background:radial-gradient(circle at 32% 65%,#1784a3,#195e7b 38%,#e16f81 65%,transparent 70%);box-shadow:0 0 70px #39bfc21c}
+.mission-hero h2{font-family:Georgia,"Times New Roman",serif;letter-spacing:-.04em}
+.mission-hero p{color:#d7e7ee}
+.top,.bottom,.lab,.related-nav,.theory-card{
+background:linear-gradient(150deg,#194052,#143547);
+border:1px solid #386579;
+box-shadow:0 9px 26px #00182325;
+}
+.search input{background:#1a4358;border-color:#3c6c7f;color:#f8fdff}
+.hinge .controls{background:#163c50;border-color:#3b677b}
+.chips button{background:#1b4053;border-color:#376174;color:#d9e9f0}
+.top .eyebrow,.mission-hero .eyebrow,.chips span{color:#c4dce6}
+.fullname,.use,.legend,.steps .res,.lab p,#pianoNote{color:#d6e5ed!important}
+.tone{background:#1e475a;border-color:#417083}
+.explain{border-top-color:#396477}
+.invnote{background:#1c4a5c;color:#eff9fc}
+.bottom .inner{min-width:0}
+.ihead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0}
+.ihead > div:first-child{min-width:0;max-width:100%;gap:10px!important}
+.ihead h3{font-size:clamp(17px,2vw,21px);line-height:1.2}
+#playFull{padding:9px 12px;font-size:12px;min-height:40px;max-width:100%;white-space:normal}
+.piano-control-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.piano-octave-buttons{display:inline-flex;gap:4px;background:#113547;border:1px solid #3d6b7e;padding:4px;border-radius:999px}
+.piano-octave-buttons button{border:0;border-radius:999px;background:transparent;color:#d5e5ee;padding:7px 13px;min-height:36px;font-size:12px;cursor:pointer}
+.piano-octave-buttons button[aria-pressed="true"]{background:linear-gradient(110deg,#F78C6A,#F04770);color:#101e2a;font-weight:700}
+.piano-hint{font-size:12px;color:#b8e3e4;display:flex;align-items:center;gap:5px}
+.piano-scroll{width:100%;max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#7bc0c8 #143b4c;overscroll-behavior-inline:contain;touch-action:pan-x;scroll-behavior:smooth;padding-bottom:10px}
+.piano-scroll::-webkit-scrollbar{height:7px}.piano-scroll::-webkit-scrollbar-thumb{background:#72afbc;border-radius:20px}
+.piano{--white-count:15;min-width:700px;height:190px}
+.piano[data-octaves="1"]{--white-count:8;min-width:0;width:100%;height:180px}
+.piano .bk{width:calc(100% / var(--white-count) * .62)}
+.piano .wk,.piano .bk{touch-action:manipulation}
+.piano .mark{width:25px;height:25px;font-size:11px}
+.piano .sub{font-size:10px}
+.piano .oct{color:#304a57}
+.sound-panel{background:#1a4154;border-color:#436b7c}
+.lab input,.lab select,.lab textarea{background:#17394a;border-color:#477183}
+.lab .lab-btn{background:#235062;border-color:#4a7384}
+.lab .seq-row{background:#1a4050;border-color:#426d7f}
+.related-nav{color:#deedf2}
+.theory-card{border-radius:20px;padding:23px;min-width:0}
+.theory-card .explain{border-top:0;padding-top:0}
+.theory-card .explain h2{font-size:20px}
+.app{grid-template-areas:"search search" "chord instrument" "theory theory"}
+.theory-card{grid-area:theory}
+.legend{max-width:100%;overflow:hidden}
+.legend span{flex-shrink:0}
+@media(max-width:850px){
+.sidebar{background:#103449f5;border-color:#45697c}
+.workspace{padding:14px}
+.app{grid-template-areas:"search" "chord" "instrument" "theory"}
+.top,.bottom,.theory-card,.lab{padding:17px;border-radius:17px}
+.mission-hero{min-height:174px}
+.mission-hero:before{width:330px;height:330px;top:-250px;right:-135px}
+.top .inner{gap:14px}
+.top .sym{font-size:clamp(42px,10vw,60px)}
+.top .tones{gap:7px}
+.bottom .legend{display:flex;flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;padding-bottom:7px;scrollbar-width:thin}
+.piano-hint{font-size:11px}
+}
+@media(max-width:560px){
+.space-shell,.workspace,.app,.top,.bottom,.lab,.theory-card{min-width:0;max-width:100%}
+.sidebar{gap:10px;padding:10px 16px}
+.mission-hero{padding:24px 15px;min-height:170px}
+.mission-hero h2{font-size:clamp(34px,9vw,42px)}
+.mission-hero p{font-size:13px;max-width:300px}
+.mission-hero:after{display:none}
+.top .actions{margin-top:13px}
+.ihead > div:first-child{width:100%;align-items:center;justify-content:space-between}
+#playFull{font-size:12px;padding:8px 11px;min-height:42px;max-width:165px}
+.ihead h3{font-size:17px;max-width:calc(100% - 155px)}
+.piano-control-row{margin:8px 0 10px}
+.piano-octave-buttons button{padding:7px 11px}
+.piano-hint{width:100%;justify-content:flex-end}
+.piano{min-width:650px;height:183px}
+.piano[data-octaves="1"]{min-width:0;height:163px;width:100%}
+.piano .mark{width:23px;height:23px}
+.piano .wk{padding-bottom:9px}
+.piano .bk .mark{width:20px;height:20px;font-size:9px}
+#pianoNote{font-size:12px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+.theory-card .steps li{grid-template-columns:12px minmax(0,1fr);gap:7px}
+.theory-card .steps .res{grid-column:2;text-align:left}
+.lab .seq-row{overflow:hidden}
+}
