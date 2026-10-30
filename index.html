@@ -866,14 +866,12 @@ function planArpeggio(notes,start,duration,bpm,pattern,rate,anchorNotes=notes){
  if(pattern==='off'||!notes.length)return [];
  const primary=[...new Set((anchorNotes.length>2?anchorNotes.slice(1):anchorNotes))].sort((a,b)=>a-b).slice(0,3);
  if(!primary.length)return [];
- const colors=[...new Set((notes.length>2?notes.slice(1):notes))].filter(n=>!primary.some(p=>p%12===n%12)).sort((a,b)=>a-b);
  const slots=pattern==='down'?[2,1,0,0]:pattern==='up'?[0,1,2,2]:[0,1,2,1];
  const step=60/bpm/rate,events=[];
- // Four stable rhythmic slots: added colors replace a weak slot, never add attacks.
- for(let i=0,t=start+step/2;t<start+duration-.025;i++,t=start+step/2+i*step){
-   const color=colors.length&&i%4===3;
-   const midi=color?colors[Math.floor(i/4)%colors.length]:primary[Math.min(slots[i%4],primary.length-1)];
-   events.push({midi:midi+12,time:t,duration:Math.min(step*1.35,start+duration-t),amplitude:.075*(color?.55:i%4===0?1:.75)/Math.sqrt(primary.length)});
+ // Start on the chord boundary; sustained color notes never change the arpeggio.
+ for(let i=0,t=start;t<start+duration-.025;i++,t=start+i*step){
+   const midi=primary[Math.min(slots[i%4],primary.length-1)];
+   events.push({midi:midi+12,time:t,duration:Math.min(step*1.35,start+duration-t),amplitude:.075*(i%4===0?1:.75)/Math.sqrt(primary.length)});
  }
  return events;
 }
@@ -1204,7 +1202,12 @@ function scheduleSequenceChord(run,notes,time,duration,connect=true,arpCore=note
   if(!notes.length)return;const n=Math.sqrt(notes.length);
   // A short release overlaps the next attack without moving the beat.
   const tail=connect?Math.min(.32,duration*.3):0;
-  notes.forEach(m=>{playTone(run,m,time,Math.min(duration,3.5),'piano',.14/n,tail*.7);playTone(run,m,time,duration,'pad',.04/n,tail);});
+  const corePcs=new Set(arpCore.map(m=>m%12));
+  notes.forEach(m=>{
+    const color=!corePcs.has(m%12);
+    playTone(run,m,time,Math.min(duration,3.5),'piano',(color?.055:.14)/n,tail*.7);
+    playTone(run,m,time,duration,'pad',(color?.048:.04)/n,tail);
+  });
   const settings=soundSettings();run.arps.push(...planArpeggio(notes,time,duration,run.bpm*($('seqMeter').value==='6/8'?1.5:1),settings.pattern,settings.rate,arpCore));
 }
 async function startSequence(){
@@ -1504,7 +1507,7 @@ function renderSequenceColors(scale){
  el.innerHTML='<small>Notas de color'+(scale.length===12?' · cromáticas':' · del modo')+'</small><div>'+choices.map(pc=>{
  const active=selected.includes(pc);
  return '<button type="button" data-color-row="'+i+'" data-color-pc="'+pc+'" aria-pressed="'+active+'" aria-label="'+(active?'Quitar ':'Añadir ')+pitchLabel(pc)+'">'+(active?'✓ ':'+ ')+pitchLabel(pc)+'</button>';
- }).join('')+'</div><small>'+(row.colorUnidentified?'Combinación sin nombre exacto: '+row.colorBase+' + '+selected.map(pitchLabel).join(', ')+'.':selected.length?'Activas: '+selected.map(pitchLabel).join(' · ')+'.':'Activa notas para explorar.')+' El arpegio conserva su pulso.</small>';
+ }).join('')+'</div><small>'+(row.colorUnidentified?'Combinación sin nombre exacto: '+row.colorBase+' + '+selected.map(pitchLabel).join(', ')+'.':selected.length?'Activas: '+selected.map(pitchLabel).join(' · ')+'.':'Activa notas para explorar.')+' Colores sostenidos; arpegio desde el tiempo 1.</small>';
  });
 }
 $('seqRows').addEventListener('click',e=>{
