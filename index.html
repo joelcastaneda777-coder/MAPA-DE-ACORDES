@@ -219,6 +219,22 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 #guitarPanel .scroll{overflow:hidden;width:100%;touch-action:auto}
 #guitarPanel .fretboard{width:100%!important;min-width:0!important;max-width:100%!important;height:220px;display:block}
 @media(max-width:650px){#guitarPanel .fretboard{height:190px}}
+</style><style>
+/* Impide que los controles ensanchen la columna del instrumento. */
+.app>.bottom,.bottom>.inner,#guitarPanel,#pianoPanel{min-width:0!important;max-width:100%;box-sizing:border-box}
+.bottom>.inner{display:block!important;width:100%}
+.bottom>.inner>*+*{margin-top:16px}
+.bottom .ihead{width:100%;min-width:0;display:flex;flex-wrap:wrap;box-sizing:border-box}
+.bottom .ihead>div,.bottom .legend{min-width:0;max-width:100%;box-sizing:border-box}
+.bottom .legend{display:flex;flex-wrap:wrap!important;white-space:normal!important;overflow:visible!important}
+#guitarPanel .gtools{display:flex;flex-wrap:wrap;width:100%;min-width:0;gap:14px;box-sizing:border-box}
+#guitarPanel .gtools>div{min-width:0;max-width:100%}
+#guitarPanel .toggle{display:flex;align-items:flex-start;white-space:normal!important;max-width:100%;min-width:0;line-height:1.5;overflow-wrap:anywhere}
+#guitarPanel .toggle input{flex:0 0 auto;margin-top:4px}
+#guitarPanel>.scroll{display:block;width:100%;min-width:0!important;max-width:100%;overflow:hidden;box-sizing:border-box}
+#guitarPanel #fretboard{width:100%!important;min-width:0!important;max-width:100%!important;height:220px;box-sizing:border-box}
+#guitarPanel .voicings{min-width:0;max-width:100%;box-sizing:border-box}
+@media(max-width:650px){#guitarPanel #fretboard{height:190px}.bottom .ihead>div:first-child{flex-wrap:wrap}}
 </style></head>
 <body>
 <div class="space-shell">
