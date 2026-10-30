@@ -1210,6 +1210,7 @@ async function startSequence(){
   saveSequence();
   const run={...makeSoundBus(c),bpm,index:0,nextTime:c.currentTime+.08,events:[],timer:null,loop:$('seqLoop').checked,done:false,active:-1};updateSoundBus(run);seqRun=run;
   const steps=entries.map(e=>({...e,seconds:sequenceSeconds(e,bpm),notes:sequenceMidi(e.chord)}));
+  run.steps=steps;run.meter=$('seqMeter').value;
   function tick(){
     if(seqRun!==run)return;
     const now=c.currentTime;
@@ -1236,7 +1237,24 @@ $('seqRows').addEventListener('input',e=>{
   row.classList.remove('invalid');sequenceSummary();saveSequence();seqMessage('Cambios listos. Pulsa reproducir para escucharlos.');
 });
 $('seqRows').addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(!b)return;stopSequence(false);seqDraft.splice(+b.dataset.remove,1);renderSequence();saveSequence();seqMessage('Acorde eliminado.');});
-function appendSequence(chord){if(seqDraft.length>=128){seqMessage('Máximo 128 acordes.',true);return;}stopSequence(false);seqDraft.push({chord,duration:4,unit:'beats'});renderSequence();saveSequence();$('seqRows').lastElementChild.querySelector('input').focus();seqMessage('Acorde añadido.');}
+function appendSequence(chord){
+ if(seqDraft.length>=128){seqMessage('Máximo 128 acordes.',true);return;}
+ const entry=sequenceEntry(chord,4,'beats'),run=seqRun;
+ seqDraft.push(entry);
+ if(run){
+   run.steps.push({...entry,seconds:sequenceSeconds(entry,run.bpm,run.meter),notes:sequenceMidi(entry.chord)});
+   // Extend the running queue, including its final release, without replacing the audio bus.
+   if(run.done){run.done=false;run.nextTime=Math.max(run.nextTime,run.context.currentTime+.03);}
+ }
+ renderSequence();saveSequence();
+ if(run){
+   document.querySelectorAll('.seq-row').forEach((r,i)=>r.classList.toggle('active',i===run.active));
+   seqMessage(chord+' añadido al final. La reproducción continúa'+(run.loop?'; si el bucle ya comenzó, lo escucharás en la siguiente vuelta.':'.'));
+ }else{
+   $('seqRows').lastElementChild.querySelector('input').focus();
+   seqMessage('Acorde añadido.');
+ }
+}
 $('seqAdd').addEventListener('click',()=>appendSequence('C'));
 $('seqCurrent').addEventListener('click',()=>appendSequence(symbol()));
 $('seqBpm').addEventListener('input',()=>{stopSequence(false);sequenceSummary();saveSequence();seqMessage('Tempo actualizado. Pulsa reproducir.');});
