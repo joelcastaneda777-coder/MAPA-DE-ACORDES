@@ -341,6 +341,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 :root[data-theme="light"] .selection-count{border-color:#bdd5d8;background:#fff}
 :root[data-theme="light"] .selection-footer{border-color:#c9dcdf}
 @media(max-width:650px){.note-builder,.context-builder{padding:16px}#notePalette{gap:6px 3px;grid-template-rows:41px 49px}.universe-tool .builder-heading h3{font-size:17px}.builder-step{font-size:9px}.context-grid{gap:12px}}
+</style><style>
+.note-registers{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px;margin:10px 0}
+.note-registers label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:7px;color:var(--ink);min-width:0}
+.note-registers label>span{font-size:12px;font-weight:600}
+.note-registers select{width:100%;min-width:0;border:0;border-radius:7px;padding:7px 3px;background:var(--surface);color:var(--ink);font-size:12px}
+.universe-tool .register-help{font-size:11px;color:var(--muted);line-height:1.5;margin:10px 0 14px}
+.note-registers:empty+.register-help{display:none}
 </style></head>
 <body>
 <div class="space-shell">
@@ -429,7 +436,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
       </div></section>
 <section class="inversions-card"><h2>Inversiones</h2><div id="inversionChoices"></div></section><section class="variations-card"><h2>Variaciones</h2><div id="variationChoices" class="chips"></div><p class="use">Explora otros colores sobre la misma fundamental.</p></section></div>
 <nav class="band related-nav" aria-label="Explorar acordes"><div class="inner"><strong>Explora acordes:</strong> <a href="/piano/do-mayor/">Do mayor en piano</a> · <a href="/piano/la-menor/">La menor en piano</a> · <a href="/guitarra/sol-mayor/">Sol mayor en guitarra</a> · <a href="/guitarra/la-menor/">La menor en guitarra</a></div></nav>
-<section class="universe-tool" id="universo" aria-labelledby="universeTitle"><div class="eyebrow">Identificador de acordes · por notas</div><h2 id="universeTitle">Construye tu universo</h2><p>¿Recuerdas las notas, pero no el nombre? Añádelas a la órbita y descubre qué acorde forman.</p><div class="universe-layout"><div class="universe-builder"><section class="note-builder"><div class="builder-heading"><div><span class="builder-step">01 · NOTAS</span><h3>Elige tu sonido</h3></div><span id="selectedNoteCount" class="selection-count">0 notas</span></div><div id="notePalette" class="note-palette" role="group" aria-label="Añadir o quitar notas"></div><div class="selection-footer"><p id="selectedNoteSummary" aria-live="polite">Selecciona al menos dos notas</p><button type="button" class="btn clear-orbit" id="clearUniverse" aria-label="Quitar todas las notas">↺ Limpiar</button></div></section><section class="context-builder"><div class="builder-heading"><div><span class="builder-step">02 · CONTEXTO OPCIONAL</span><h3>Dale una dirección</h3></div></div><div class="context-grid"><label class="bass-label">Tonalidad de referencia<select id="galaxyKey"><option value="">Sin tonalidad</option></select></label><label class="bass-label">Interpretación<select id="galaxyReading"><option value="">Automática</option></select></label><label class="bass-label">Nota del bajo (opcional)<select id="universeBass"><option value="">Sin especificar</option></select></label></div><p class="context-hint">El bajo define la inversión; la tonalidad ayuda a interpretar su función.</p></section><div id="universeResults" aria-live="polite"></div></div><div class="solar-stage"><svg id="solarSystem" viewBox="0 0 500 400" role="img" aria-label="Sistema orbital de las notas seleccionadas"></svg><div id="galaxyCaption" class="galaxy-caption" aria-live="polite"></div><button type="button" class="btn" id="galaxyPause" aria-pressed="false">Pausar movimiento</button><button type="button" class="btn" id="hearUniverse">▶ Escuchar notas</button></div></div><div id="compatibleModes" class="mode-results"></div><p class="use">Las órbitas representan intervalos. Las escalas mostradas contienen todas las notas seleccionadas; la función armónica depende de la tonalidad y la progresión. Las notas sin registro pueden admitir varios nombres.</p></section>
+<section class="universe-tool" id="universo" aria-labelledby="universeTitle"><div class="eyebrow">Identificador de acordes · por notas</div><h2 id="universeTitle">Construye tu universo</h2><p>¿Recuerdas las notas, pero no el nombre? Añádelas a la órbita y descubre qué acorde forman.</p><div class="universe-layout"><div class="universe-builder"><section class="note-builder"><div class="builder-heading"><div><span class="builder-step">01 · NOTAS</span><h3>Elige tu sonido</h3></div><span id="selectedNoteCount" class="selection-count">0 notas</span></div><div id="notePalette" class="note-palette" role="group" aria-label="Añadir o quitar notas"></div><div id="noteRegisters" class="note-registers" role="group" aria-label="Octava de cada nota"></div><p class="register-help">Elige la octava de cada nota. Do4 es el Do central; la nota más grave determina el bajo.</p><div class="selection-footer"><p id="selectedNoteSummary" aria-live="polite">Selecciona al menos dos notas</p><button type="button" class="btn clear-orbit" id="clearUniverse" aria-label="Quitar todas las notas">↺ Limpiar</button></div></section><section class="context-builder"><div class="builder-heading"><div><span class="builder-step">02 · CONTEXTO OPCIONAL</span><h3>Dale una dirección</h3></div></div><div class="context-grid"><label class="bass-label">Tonalidad de referencia<select id="galaxyKey"><option value="">Sin tonalidad</option></select></label><label class="bass-label">Interpretación<select id="galaxyReading"><option value="">Automática</option></select></label><label class="bass-label">Nota del bajo (opcional)<select id="universeBass"><option value="">Sin especificar</option></select></label></div><p class="context-hint">El bajo define la inversión; la tonalidad ayuda a interpretar su función.</p></section><div id="universeResults" aria-live="polite"></div></div><div class="solar-stage"><svg id="solarSystem" viewBox="0 0 500 400" role="img" aria-label="Sistema orbital de las notas seleccionadas"></svg><div id="galaxyCaption" class="galaxy-caption" aria-live="polite"></div><button type="button" class="btn" id="galaxyPause" aria-pressed="false">Pausar movimiento</button><button type="button" class="btn" id="hearUniverse">▶ Escuchar notas</button></div></div><div id="compatibleModes" class="mode-results"></div><p class="use">Las órbitas representan intervalos. Las escalas mostradas contienen todas las notas seleccionadas; la función armónica depende de la tonalidad y la progresión. Las notas sin registro pueden admitir varios nombres.</p></section>
 <section class="lab" id="laboratorio" aria-labelledby="labTitle">
  <div class="inner">
   <div class="lab-head"><div><div class="eyebrow">Laboratorio armónico</div><h2 id="labTitle">Escucha tu progresión</h2></div><span class="seq-summary" id="seqSummary"></span></div>
@@ -507,8 +514,13 @@ const QUAL={
  maj13:{sym:'maj13',name:'mayor trecena',tones:['1','3','5','7','9','13'],desc:'maj9 + 13ª. Muy amplio.',use:'Imaj13 como acorde final en jazz y neo-soul.'},
  m13:{sym:'m13',name:'menor trecena',tones:['1','b3','5','b7','9','11','13'],desc:'m11 + 13ª: el acorde dórico completo.',use:'ii13 o i13 en música modal y jazz.'}
 };
+for(const key of ['9','maj9','m9','11','maj11','m11','maj7#11','maj9#11','13','maj13','m13','7b9','7#9']){
+ const q=QUAL[key];if(!q.tones.includes('5'))continue;
+ QUAL[key+'no5']={...q,sym:q.sym+'(no5)',name:q.name+' sin quinta',tones:q.tones.filter(t=>t!=='5'),omitted:['5'],baseKey:key,desc:q.desc+' En esta disposición se omite la quinta justa.',use:q.use+' El cifrado (no5) indica la quinta omitida.'};
+}
 const ALIAS={'maj6':'6','major6':'6','maj11':'maj11','maj9#11':'maj9#11','add11':'add11','add4':'add11','madd11':'madd11','madd4':'madd11','7sus2':'7sus2','9sus4':'9sus4','':'maj','maj':'maj','m':'m','dim':'dim','o':'dim','aug':'aug','+':'aug','#5':'aug','sus2':'sus2','2':'sus2','sus4':'sus4','sus':'sus4','4':'sus4','5':'5','6':'6','m6':'m6','69':'69','7':'7','dom7':'7','maj7':'maj7','m7':'m7','mmaj7':'mmaj7','mm7':'mmaj7','m7b5':'m7b5','m7-5':'m7b5','dim7':'dim7','o7':'dim7','7sus4':'7sus4','7sus':'7sus4','aug7':'aug7','7#5':'aug7','+7':'aug7','7+':'aug7','7aug':'aug7','7+5':'aug7','7b5':'7b5','7-5':'7b5','add9':'add9','add2':'add2','madd9':'madd9','madd2':'madd2','9':'9','maj9':'maj9','m9':'m9','7b9':'7b9','7#9':'7#9','11':'11','m11':'m11','maj7#11':'maj7#11','13':'13','maj13':'maj13','m13':'m13'};
 
+for(const [key,q] of Object.entries(QUAL))if(q.omitted)ALIAS[q.sym.replace(/[()]/g,'').replace(/♯/g,'#').replace(/♭/g,'b').toLowerCase()]=key;
 const CHORD_FAMILIES=[
  {id:'triads',name:'Tríadas',keys:['maj','m','dim','aug','5'],note:'Mayor, menor, disminuida y aumentada. El acorde de quinta se incluye como opción sin tercera.'},
  {id:'sevenths',name:'Séptimas',keys:['maj7','7','m7','mmaj7','m7b5','dim7','aug7','7b5'],note:'Distingue séptima mayor, menor y disminuida. Las alteraciones cambian el color de la quinta.'},
@@ -1075,6 +1087,9 @@ renderSequence();
 let notation=store.get('mapa-notation')==='latin'?'latin':'us';
 const pitchNames=['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
 const selectedNotes=new Set();
+const noteOctaves=new Map();
+function noteMidi(pc){return 12*((noteOctaves.get(pc)??4)+1)+pc;}
+function registerOrder(){return [...selectedNotes].sort((a,b)=>noteMidi(a)-noteMidi(b));}
 function displayTone(t){return notation==='latin'?t.latin:t.name;}
 function pitchLabel(pc){const n=parseNote(pitchNames[pc],true);return (notation==='latin'?LATIN[n.letter]:n.letter)+accStr(n.acc);}
 function displaySymbol(){return symbol().replace(/[A-G]/g,l=>notation==='latin'?LATIN[l]:l);}
@@ -1102,11 +1117,12 @@ function identifyNotes(pcs){
  const expected=[...new Set(q.tones.map(tok=>{const t=tokParse(tok);return(root+DEG_SEMI[t.deg]+t.acc)%12;}))];
  if(expected.length===pcs.length&&expected.every(pc=>pcs.includes(pc)))found.push({root,key,q});
  }
- return found;
+ return found.sort((a,b)=>(a.q.omitted?1:0)-(b.q.omitted?1:0));
 }
 
 let galaxyPaused=false,galaxySignature='',galaxyCleanup;
 function galaxyFamily(key){
+ key=QUAL[key]?.baseKey||key;
  if(['dim','dim7','m7b5'].includes(key))return ['Misterio · tensión','#e16ab6','#8964da',3];
  if(['aug','aug7'].includes(key))return ['Extrañeza · expansión','#e58e5c','#e35fa2',3];
  if(key.includes('sus'))return ['Flotante · abierto','#64d8dc','#79d4ba',2];
@@ -1117,7 +1133,8 @@ function galaxyFamily(key){
  return ['Dulce · espacioso','#e9b49a','#a8d0b5',2];
 }
 function galaxyFunction(match,key){
- if(!match||!key)return {text:'Sin función asignada · elige una tonalidad',speed:100};
+ if(!key)return {text:'Sin función asignada · elige una tonalidad',speed:100};
+ if(!match)return {text:'Combinación sin identificar · función pendiente en la tonalidad elegida',speed:100};
  const [tonic,mode]=key.split(':'),d=(match.root-Number(tonic)+12)%12;
  const scale=mode==='major'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10];
  const pcs=match.q.tones.map(tok=>{const t=tokParse(tok);return(match.root+DEG_SEMI[t.deg]+t.acc)%12;});
@@ -1173,10 +1190,13 @@ function renderUniverse(){
  $('selectedNoteCount').textContent=pcs.length+(pcs.length===1?' nota':' notas');
  $('selectedNoteSummary').textContent=pcs.length?pcs.map(pitchLabel).join(' · '):'Selecciona al menos dos notas';
  $('clearUniverse').disabled=!pcs.length;
+ $('noteRegisters').innerHTML=pcs.map(pc=>'<label><span>'+pitchLabel(pc)+'</span><select data-octave-pc="'+pc+'" aria-label="Octava de '+pitchLabel(pc)+'">'+[2,3,4,5,6].map(o=>'<option value="'+o+'" '+((noteOctaves.get(pc)??4)===o?'selected':'')+'>'+pitchLabel(pc)+o+'</option>').join('')+'</select></label>').join('');
+ if(pcs.length)$('selectedNoteSummary').textContent=registerOrder().map(pc=>pitchLabel(pc)+(noteOctaves.get(pc)??4)).join(' · ');
+
  $('universeBass').innerHTML='<option value="">Sin especificar</option>'+pcs.map(pc=>`<option value="${pc}">${pitchLabel(pc)}</option>`).join('');
- if(pcs.includes(Number(bass))&&bass!=='')$('universeBass').value=bass;
+ if(pcs.length)$('universeBass').value=String(registerOrder()[0]);
  const actualBass=$('universeBass').value;
- $('universeResults').innerHTML=pcs.length<2?'<p>Añade al menos dos notas para descubrir acordes.</p>':matches.length?'<h3>'+matches.length+' interpretación'+(matches.length===1?'':'es')+'</h3>'+matches.map(m=>{const chord=pitchNames[m.root]+m.q.sym+(actualBass!==''&&+actualBass!==m.root?'/'+pitchNames[actualBass]:'');return `<button type="button" class="match-card" data-match="${esc(chord)}"><b>${pitchLabel(m.root)+esc(m.q.sym)}${actualBass!==''&&+actualBass!==m.root?'/'+pitchLabel(+actualBass):''}</b><span>${pitchLabel(m.root)} ${esc(m.q.name)}</span><small>Abrir en el explorador ↗</small></button>`;}).join(''):'<p>Sin coincidencia exacta en el catálogo actual. Tu combinación sigue siendo válida: puedes escucharla y seguir explorando.</p>';
+ $('universeResults').innerHTML=pcs.length<2?'<p>Añade al menos dos notas para descubrir acordes.</p>':matches.length?'<h3>'+matches.length+' interpretación'+(matches.length===1?'':'es')+'</h3>'+matches.map(m=>{const chord=pitchNames[m.root]+m.q.sym+(actualBass!==''&&+actualBass!==m.root?'/'+pitchNames[actualBass]:'');return `<button type="button" class="match-card" data-match="${esc(chord)}"><b>${pitchLabel(m.root)+esc(m.q.sym)}${actualBass!==''&&+actualBass!==m.root?'/'+pitchLabel(+actualBass):''}</b><span>${pitchLabel(m.root)} ${esc(m.q.name)}</span><small>${m.q.omitted?'Quinta justa omitida · ':''}Abrir en el explorador ↗</small></button>`;}).join(''):'<p>Sin coincidencia exacta en el catálogo actual. Tu combinación sigue siendo válida: puedes escucharla y seguir explorando.</p>';
  updateGalaxy(pcs,matches);
  $('hearUniverse').disabled=!pcs.length;
  const modes=[['jónico',[0,2,4,5,7,9,11]],['dórico',[0,2,3,5,7,9,10]],['frigio',[0,1,3,5,7,8,10]],['lidio',[0,2,4,6,7,9,11]],['mixolidio',[0,2,4,5,7,9,10]],['eólico',[0,2,3,5,7,8,10]],['locrio',[0,1,3,5,6,8,10]]];
@@ -1194,9 +1214,16 @@ for(const [id,value] of [['notationUS','us'],['notationLatin','latin']])$(id).ad
 $('inversionChoices').addEventListener('click',e=>{const b=e.target.closest('[data-inversion]');if(!b)return;state.extraBass=null;state.inv=+b.dataset.inversion;state.vIdx=null;vCache=null;render();});
 $('variationChoices').addEventListener('click',e=>{const b=e.target.closest('[data-variation]');if(b){input.value=b.dataset.variation;tryInput(true);}});
 $('notePalette').addEventListener('click',e=>{const b=e.target.closest('[data-pc]');if(!b)return;const pc=+b.dataset.pc;selectedNotes.has(pc)?selectedNotes.delete(pc):selectedNotes.add(pc);renderUniverse();});
-$('universeBass').addEventListener('change',renderUniverse);
-$('clearUniverse').addEventListener('click',()=>{selectedNotes.clear();renderUniverse();});
-$('hearUniverse').addEventListener('click',()=>playMidi([...selectedNotes].sort((a,b)=>a-b).map(pc=>60+pc),0,true));
+$('noteRegisters').addEventListener('change',e=>{const pc=e.target.dataset.octavePc;if(pc===undefined)return;const octave=Number(e.target.value);if(octave<2||octave>6)return;noteOctaves.set(+pc,octave);renderUniverse();});
+$('universeBass').addEventListener('change',()=>{
+ const value=$('universeBass').value;if(value===''){renderUniverse();return;}
+ const pc=+value,others=[...selectedNotes].filter(n=>n!==pc);
+ if(others.length){let octave=noteOctaves.get(pc)??4;const lowest=Math.min(...others.map(noteMidi));while(12*(octave+1)+pc>=lowest&&octave>2)octave--;noteOctaves.set(pc,octave);
+ if(noteMidi(pc)>=lowest){for(const other of others)if(noteMidi(other)<=noteMidi(pc))noteOctaves.set(other,Math.min(6,(noteOctaves.get(other)??4)+1));}}
+ renderUniverse();
+});
+$('clearUniverse').addEventListener('click',()=>{selectedNotes.clear();noteOctaves.clear();renderUniverse();});
+$('hearUniverse').addEventListener('click',()=>playMidi(registerOrder().map(noteMidi),0,true));
 $('universeResults').addEventListener('click',e=>{const b=e.target.closest('[data-match]');if(!b)return;input.value=b.dataset.match;tryInput(true);$('acorde').scrollIntoView({behavior:'smooth',block:'start'});});
 function updateThemeButton(){
  const light=document.documentElement.dataset.theme==='light';
