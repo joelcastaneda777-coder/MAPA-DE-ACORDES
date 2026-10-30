@@ -215,6 +215,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 .flight-art{width:100%;height:100%;overflow:visible}
 .flight-scene .hero-orbit{width:64%;height:90%;right:0;top:0;transform:rotate(-12deg)}
 @media(max-width:650px){.mission-hero{padding:17px 8px 0;min-height:300px;justify-content:flex-start}.mission-hero h2{font-size:38px;margin:12px 0 8px}.mission-hero p{font-size:13px}.flight-scene{width:100%;height:190px;top:auto;bottom:-8px}.flight-scene .hero-orbit{width:64%;height:95%;opacity:1;right:0;top:0}.mission-hero .eyebrow{font-size:9px}}
+</style><style>
+#guitarPanel .scroll{overflow:hidden;width:100%;touch-action:auto}
+#guitarPanel .fretboard{width:100%!important;min-width:0!important;max-width:100%!important;height:220px;display:block}
+@media(max-width:650px){#guitarPanel .fretboard{height:190px}}
 </style></head>
 <body>
 <div class="space-shell">
@@ -289,7 +293,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
           <label class="toggle"><input type="checkbox" id="showAll"> Ver todas las notas del acorde en el mástil</label>
         </div>
         <div class="scroll" style="margin-top:10px"><svg class="fretboard" id="fretboard" viewBox="0 0 1100 220" role="img" aria-label="Mástil de guitarra"></svg></div>
-        <div class="eyebrow" style="margin:14px 0 8px">Disposiciones</div>
+        <p id="fretFocusHint" class="use" aria-live="polite" style="font-size:11px;margin:8px 0">Vista centrada en la digitación</p><div class="eyebrow" style="margin:14px 0 8px">Disposiciones</div>
         <div class="voicings" id="voicings"></div>
       </div>
     </div>
@@ -677,6 +681,7 @@ function renderGuitar(){
     $('tab').textContent=v.frets.join(' ');
   }else $('tab').textContent='—';
   $('fretboard').innerHTML=s;
+  focusFretboard(v);
 
   if(!list.length){$('voicings').innerHTML=`<div class="empty">No encontré una digitación cómoda para esta inversión. Prueba otra inversión o activa «Ver todas las notas» para armarla tú.</div>`;return;}
   $('voicings').innerHTML=list.map((d,idx)=>{
@@ -697,6 +702,37 @@ function renderGuitar(){
   }).join('');
 }
 
+
+/* Ventana del mástil: acompaña cada digitación sin barra horizontal. */
+let fretMotion=0;
+function focusFretboard(voicing){
+  const svg=$('fretboard');
+  cancelAnimationFrame(fretMotion);
+  const frets=voicing?voicing.frets.filter(f=>f!=='x'):[];
+  const pressed=frets.filter(f=>f>0);
+  let low=pressed.length?Math.min(...pressed):1;
+  let high=pressed.length?Math.max(...pressed):5;
+  if(frets.includes(0))low=0;
+  let first=Math.max(0,low-1),last=Math.min(15,Math.max(high+1,first+5));
+  first=Math.max(0,Math.min(first,last-5));
+  if(state.showAll){first=0;last=15;}
+  const left=first===0?8:fx(first)-12,right=fx(last)+18;
+  const target=[left,0,right-left,220];
+  const old=(svg.getAttribute('viewBox')||'0 0 1100 220').split(' ').map(Number);
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  svg.setAttribute('aria-label','Mástil de guitarra, trastes '+(first||0)+' a '+last);
+  const hint=$('fretFocusHint');
+  if(hint)hint.textContent=state.showAll?'Vista completa · todas las notas':'Vista centrada en la digitación · trastes '+(first||0)+'–'+last;
+  if(reduced||!svg.dataset.focusReady){svg.setAttribute('viewBox',target.join(' '));svg.dataset.focusReady='true';return;}
+  const start=performance.now();
+  function frame(now){
+    const progress=Math.min(1,(now-start)/720);
+    const ease=progress<.5?4*progress*progress*progress:1-Math.pow(-2*progress+2,3)/2;
+    svg.setAttribute('viewBox',target.map((n,i)=>old[i]+(n-old[i])*ease).join(' '));
+    if(progress<1)fretMotion=requestAnimationFrame(frame);
+  }
+  fretMotion=requestAnimationFrame(frame);
+}
 
 /* ---------- Datos de la progresión ---------- */
 function sequenceEntry(chord,duration=4,unit='beats'){
