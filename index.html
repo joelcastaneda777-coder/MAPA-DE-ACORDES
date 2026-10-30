@@ -281,6 +281,22 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 :root[data-theme="light"] .universe-nav #themeToggle{background:linear-gradient(120deg,#e1eded,#c5dddd);border-color:#aac8cf}
 :root[data-theme="light"] #themeToggle .theme-thumb{transform:translateX(28px);background:linear-gradient(135deg,#fff5ce,#ffd167);color:#825313}
 @media(prefers-reduced-motion:reduce){#themeToggle .theme-thumb{transition:none}}
+</style><style>
+#solarSystem{min-height:300px;width:100%;overflow:hidden}
+.galaxy-drift{transform-origin:250px 200px;animation:galaxy-drift var(--galaxy-period,100s) linear infinite}
+.galaxy-enter{animation:galaxy-arrive 1.5s ease both}
+.galaxy-leave{animation:galaxy-depart 1.5s ease both;pointer-events:none}
+.galaxy-paused .galaxy-drift{animation-play-state:paused}
+@keyframes galaxy-drift{to{transform:rotate(360deg)}}
+@keyframes galaxy-arrive{from{opacity:0}to{opacity:1}}
+@keyframes galaxy-depart{from{opacity:1}to{opacity:0}}
+.galaxy-caption{display:grid;text-align:center;gap:8px;margin:0 0 18px;min-height:94px;color:var(--ink)}
+.galaxy-caption strong{font:36px Georgia,serif}.galaxy-caption span{font-size:13px}.galaxy-caption small{font-size:12px;color:var(--muted)}
+.galaxy-caption .galaxy-art-note{font-size:10px;opacity:.7}
+#galaxyPause{font-size:11px;min-height:34px;margin-bottom:10px}
+:root[data-theme="light"] .galaxy-caption{color:#163f4c}
+@media(max-width:650px){#solarSystem{min-height:240px}.galaxy-caption strong{font-size:30px}}
+@media(prefers-reduced-motion:reduce){.galaxy-drift,.galaxy-enter,.galaxy-leave{animation:none}.galaxy-leave{display:none}}
 </style></head>
 <body>
 <div class="space-shell">
@@ -369,7 +385,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
       </div></section>
 <section class="inversions-card"><h2>Inversiones</h2><div id="inversionChoices"></div></section><section class="variations-card"><h2>Variaciones</h2><div id="variationChoices" class="chips"></div><p class="use">Explora otros colores sobre la misma fundamental.</p></section></div>
 <nav class="band related-nav" aria-label="Explorar acordes"><div class="inner"><strong>Explora acordes:</strong> <a href="/piano/do-mayor/">Do mayor en piano</a> · <a href="/piano/la-menor/">La menor en piano</a> · <a href="/guitarra/sol-mayor/">Sol mayor en guitarra</a> · <a href="/guitarra/la-menor/">La menor en guitarra</a></div></nav>
-<section class="universe-tool" id="universo" aria-labelledby="universeTitle"><div class="eyebrow">Identificador de acordes · por notas</div><h2 id="universeTitle">Construye tu universo</h2><p>¿Recuerdas las notas, pero no el nombre? Añádelas a la órbita y descubre qué acorde forman.</p><div class="universe-layout"><div><div id="notePalette" class="note-palette" role="group" aria-label="Añadir o quitar notas"></div><label class="bass-label">Nota del bajo (opcional)<select id="universeBass"><option value="">Sin especificar</option></select></label><button type="button" class="btn" id="clearUniverse">Limpiar órbita</button><div id="universeResults" aria-live="polite"></div></div><div class="solar-stage"><svg id="solarSystem" viewBox="0 0 500 400" role="img" aria-label="Sistema orbital de las notas seleccionadas"></svg><button type="button" class="btn" id="hearUniverse">▶ Escuchar notas</button></div></div><div id="compatibleModes" class="mode-results"></div><p class="use">Las órbitas representan intervalos. Las escalas mostradas contienen todas las notas seleccionadas; la función armónica depende de la tonalidad y la progresión. Las notas sin registro pueden admitir varios nombres.</p></section>
+<section class="universe-tool" id="universo" aria-labelledby="universeTitle"><div class="eyebrow">Identificador de acordes · por notas</div><h2 id="universeTitle">Construye tu universo</h2><p>¿Recuerdas las notas, pero no el nombre? Añádelas a la órbita y descubre qué acorde forman.</p><div class="universe-layout"><div><div id="notePalette" class="note-palette" role="group" aria-label="Añadir o quitar notas"></div><label class="bass-label">Tonalidad de referencia<select id="galaxyKey"><option value="">Sin tonalidad</option></select></label><label class="bass-label">Interpretación<select id="galaxyReading"><option value="">Automática</option></select></label><label class="bass-label">Nota del bajo (opcional)<select id="universeBass"><option value="">Sin especificar</option></select></label><button type="button" class="btn" id="clearUniverse">Limpiar órbita</button><div id="universeResults" aria-live="polite"></div></div><div class="solar-stage"><svg id="solarSystem" viewBox="0 0 500 400" role="img" aria-label="Sistema orbital de las notas seleccionadas"></svg><div id="galaxyCaption" class="galaxy-caption" aria-live="polite"></div><button type="button" class="btn" id="galaxyPause" aria-pressed="false">Pausar movimiento</button><button type="button" class="btn" id="hearUniverse">▶ Escuchar notas</button></div></div><div id="compatibleModes" class="mode-results"></div><p class="use">Las órbitas representan intervalos. Las escalas mostradas contienen todas las notas seleccionadas; la función armónica depende de la tonalidad y la progresión. Las notas sin registro pueden admitir varios nombres.</p></section>
 <section class="lab" id="laboratorio" aria-labelledby="labTitle">
  <div class="inner">
   <div class="lab-head"><div><div class="eyebrow">Laboratorio armónico</div><h2 id="labTitle">Escucha tu progresión</h2></div><span class="seq-summary" id="seqSummary"></span></div>
@@ -1016,6 +1032,68 @@ function identifyNotes(pcs){
  }
  return found;
 }
+
+let galaxyPaused=false,galaxySignature='',galaxyCleanup;
+function galaxyFamily(key){
+ if(['dim','dim7','m7b5'].includes(key))return ['Misterio · tensión','#e16ab6','#8964da',3];
+ if(['aug','aug7'].includes(key))return ['Extrañeza · expansión','#e58e5c','#e35fa2',3];
+ if(key.includes('sus'))return ['Flotante · abierto','#64d8dc','#79d4ba',2];
+ if(['7b9','7#9','7b5'].includes(key))return ['Fricción · intensidad','#ed6d7a','#9f68df',5];
+ if(['7','9','11','13'].includes(key))return ['Impulso · expectativa','#f78c6a','#efbb69',4];
+ if(key.startsWith('maj'))return key==='maj'?['Luminoso · abierto','#edd28c','#f6e7be',2]:['Nostálgico · delicado','#65d3cf','#ebaacb',2];
+ if(key.startsWith('m'))return ['Íntimo · profundo','#8a95e9','#b792d7',3];
+ return ['Dulce · espacioso','#e9b49a','#a8d0b5',2];
+}
+function galaxyFunction(match,key){
+ if(!match||!key)return {text:'Sin función asignada · elige una tonalidad',speed:100};
+ const [tonic,mode]=key.split(':'),d=(match.root-Number(tonic)+12)%12;
+ const scale=mode==='major'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10];
+ const pcs=match.q.tones.map(tok=>{const t=tokParse(tok);return(match.root+DEG_SEMI[t.deg]+t.acc)%12;});
+ const diatonic=pcs.every(pc=>scale.includes((pc-Number(tonic)+12)%12));
+ const intervals=pcs.map(pc=>(pc-match.root+12)%12);
+ if(d===7&&intervals.includes(4)&&intervals.includes(10))return {text:'V7 y extensiones · dominante posible',speed:65};
+ if(!diatonic)return {text:'Acorde cromático · función según contexto',speed:85};
+ const degree=scale.indexOf(d),roman=(mode==='major'?['I','ii','iii','IV','V','vi','vii°']:['i','ii°','III','iv','v','VI','VII'])[degree];
+ const role=degree===0?'tónica':degree===1||degree===3?'predominante posible':mode==='major'&&(degree===4||degree===6)?'dominante posible':'función según la progresión';
+ return {text:roman+' · '+role,speed:degree===0?125:role.includes('predominante')?95:75};
+}
+function updateGalaxy(pcs,matches){
+ const reading=$('galaxyReading'),previous=reading.value;
+ reading.innerHTML='<option value="">Automática</option>'+matches.map(m=>'<option value="'+m.root+':'+m.key+'">'+pitchLabel(m.root)+esc(m.q.sym)+'</option>').join('');
+ if(matches.some(m=>m.root+':'+m.key===previous))reading.value=previous;
+ const match=matches.find(m=>m.root+':'+m.key===reading.value)||matches[0];
+ const family=match?galaxyFamily(match.key):['Nebulosa por descubrir','#8caabb','#98b7b5',2];
+ const role=galaxyFunction(match,$('galaxyKey').value);
+ $('galaxyCaption').innerHTML='<strong>'+ (match?pitchLabel(match.root)+esc(match.q.sym):'Nebulosa por descubrir')+'</strong><span>'+family[0]+'</span><small>'+role.text+'</small><small class="galaxy-art-note">Interpretación visual artística</small>';
+ const signature=pcs.join(',')+'|'+(match?match.root+match.key:'')+'|'+$('galaxyKey').value+'|'+notation;
+ if(signature===galaxySignature)return;
+ galaxySignature=signature;
+ const svg=$('solarSystem'),root=match?match.root:null,turn=(root||0)*17;
+ let mist='',stars='';
+ for(let arm=0;arm<family[3];arm++){
+   let path='';
+   for(let i=0;i<=65;i++){const r=18+i*2.7,a=i*.075+arm*2*Math.PI/family[3]+turn*Math.PI/180;const x=250+Math.cos(a)*r,y=200+Math.sin(a)*r*.6;path+=(i?' L':'M')+x.toFixed(2)+' '+y.toFixed(2);}
+   mist+='<path d="'+path+'" fill="none" stroke="'+(arm%2?family[2]:family[1])+'" stroke-width="14" stroke-linecap="round" opacity=".10"/><path d="'+path+'" fill="none" stroke="'+family[1]+'" stroke-width="2" opacity=".30"/>';
+ }
+ let seed=pcs.reduce((a,b)=>a*13+b+1,7);
+ for(let i=0;i<110;i++){seed=(seed*1664525+1013904223)>>>0;const a=seed/4294967296*Math.PI*2;seed=(seed*1664525+1013904223)>>>0;const r=Math.sqrt(seed/4294967296)*195;stars+='<circle cx="'+(250+Math.cos(a)*r).toFixed(1)+'" cy="'+(200+Math.sin(a)*r*.62).toFixed(1)+'" r="'+(i%5===0?1.5:.7)+'" fill="'+(i%2?family[1]:family[2])+'" opacity="'+(i%3===0?.65:.3)+'"/>';}
+ const notes=pcs.map(pc=>{
+   if(pc===root)return '';
+   const interval=root===null?null:(pc-root+12)%12;
+   const tone=match?match.q.tones.find(tok=>{const t=tokParse(tok);return(DEG_SEMI[t.deg]+t.acc)%12===interval;}):null;
+   const color=tone?TONE_VAR[clsOf(tokParse(tone).deg)]:'#a7c6cd';
+   const i=pcs.indexOf(pc),a=i*2.399+turn*Math.PI/180,rx=75+(interval===null?i*18:interval*9),x=250+Math.cos(a)*rx,y=200+Math.sin(a)*rx*.59;
+   return '<ellipse cx="250" cy="200" rx="'+rx+'" ry="'+rx*.59+'" fill="none" stroke="'+family[1]+'" stroke-opacity=".2"/><circle cx="'+x+'" cy="'+y+'" r="14" style="fill:'+color+'"/><text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" fill="#103440" font-size="11" font-weight="700">'+pitchLabel(pc)+'</text>';
+ }).join('');
+ const center=root===null?'':'<circle cx="250" cy="200" r="24" fill="#f04770"/><text x="250" y="205" text-anchor="middle" fill="#103440" font-weight="700">'+pitchLabel(root)+'</text>';
+ const glow='<ellipse cx="250" cy="200" rx="150" ry="95" fill="'+family[1]+'" opacity=".08"/>';
+ const next='<g class="galaxy-current galaxy-enter"><g class="galaxy-drift" style="--galaxy-period:'+role.speed+'s">'+glow+mist+stars+'</g>'+notes+center+'</g>';
+ clearTimeout(galaxyCleanup);
+ const old=svg.querySelector('.galaxy-current');
+ svg.innerHTML=(old?'<g class="galaxy-leave">'+old.innerHTML+'</g>':'')+next;
+ svg.classList.toggle('galaxy-paused',galaxyPaused);
+ galaxyCleanup=setTimeout(()=>{const oldLayer=svg.querySelector('.galaxy-leave');if(oldLayer)oldLayer.remove();},1600);
+}
 function renderUniverse(){
  const pcs=[...selectedNotes].sort((a,b)=>a-b),matches=identifyNotes(pcs),bass=$('universeBass').value;
  $('notePalette').innerHTML=pitchNames.map((n,pc)=>`<button class="planet-choice" type="button" data-pc="${pc}" aria-pressed="${selectedNotes.has(pc)}">${pitchLabel(pc)}</button>`).join('');
@@ -1023,13 +1101,17 @@ function renderUniverse(){
  if(pcs.includes(Number(bass))&&bass!=='')$('universeBass').value=bass;
  const actualBass=$('universeBass').value;
  $('universeResults').innerHTML=pcs.length<2?'<p>Añade al menos dos notas para descubrir acordes.</p>':matches.length?'<h3>'+matches.length+' interpretación'+(matches.length===1?'':'es')+'</h3>'+matches.map(m=>{const chord=pitchNames[m.root]+m.q.sym+(actualBass!==''&&+actualBass!==m.root?'/'+pitchNames[actualBass]:'');return `<button type="button" class="match-card" data-match="${esc(chord)}"><b>${pitchLabel(m.root)+esc(m.q.sym)}${actualBass!==''&&+actualBass!==m.root?'/'+pitchLabel(+actualBass):''}</b><span>${pitchLabel(m.root)} ${esc(m.q.name)}</span><small>Abrir en el explorador ↗</small></button>`;}).join(''):'<p>Sin coincidencia exacta en el catálogo actual. Tu combinación sigue siendo válida: puedes escucharla y seguir explorando.</p>';
- const root=matches.length?matches[0].root:pcs[0];
- $('solarSystem').innerHTML=orbitSVG(pcs,root).replace(/^<svg[^>]*>|<\/svg>$/g,'');
+ updateGalaxy(pcs,matches);
  $('hearUniverse').disabled=!pcs.length;
  const modes=[['jónico',[0,2,4,5,7,9,11]],['dórico',[0,2,3,5,7,9,10]],['frigio',[0,1,3,5,7,8,10]],['lidio',[0,2,4,6,7,9,11]],['mixolidio',[0,2,4,5,7,9,10]],['eólico',[0,2,3,5,7,8,10]],['locrio',[0,1,3,5,6,8,10]]];
  const compatible=[];if(pcs.length>=2)for(let tonic=0;tonic<12;tonic++)for(const [name,steps] of modes)if(pcs.every(pc=>steps.includes((pc-tonic+12)%12)))compatible.push(pitchLabel(tonic)+' '+name);
  $('compatibleModes').innerHTML=compatible.length?'<h3>Escalas y modos diatónicos compatibles ('+compatible.length+')</h3><div class="mode-tags">'+compatible.map(x=>'<span>'+x+'</span>').join('')+'</div>':pcs.length>=2?'<p>No hay una escala diatónica de siete notas que contenga toda esta combinación.</p>':'';
 }
+
+$('galaxyKey').innerHTML='<option value="">Sin tonalidad</option>'+pitchNames.map((n,i)=>'<option value="'+i+':major">'+n+' mayor</option><option value="'+i+':minor">'+n+' menor</option>').join('');
+$('galaxyKey').addEventListener('change',renderUniverse);
+$('galaxyReading').addEventListener('change',renderUniverse);
+$('galaxyPause').addEventListener('click',()=>{galaxyPaused=!galaxyPaused;$('solarSystem').classList.toggle('galaxy-paused',galaxyPaused);$('galaxyPause').textContent=galaxyPaused?'Reanudar movimiento':'Pausar movimiento';$('galaxyPause').setAttribute('aria-pressed',String(galaxyPaused));});
 for(const [id,value] of [['notationUS','us'],['notationLatin','latin']])$(id).addEventListener('click',()=>{notation=value;store.set('mapa-notation',value);render();});
 $('inversionChoices').addEventListener('click',e=>{const b=e.target.closest('[data-inversion]');if(!b)return;state.extraBass=null;state.inv=+b.dataset.inversion;state.vIdx=null;vCache=null;render();});
 $('variationChoices').addEventListener('click',e=>{const b=e.target.closest('[data-variation]');if(b){input.value=b.dataset.variation;tryInput(true);}});
