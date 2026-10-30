@@ -840,14 +840,16 @@ function makeSoundBus(c){
 }
 function updateSoundBus(bus){const settings=soundSettings();for(const name of ['piano','harp','pad'])bus.layers[name].gain.setTargetAtTime(settings[name],bus.context.currentTime,.035);return settings;}
 function disposeSoundBus(bus){for(const o of [...bus.voices]){try{o.stop()}catch(e){}}bus.voices.clear();for(const n of [bus.gain,...bus.nodes]){try{n.disconnect()}catch(e){}}bus.arps=[];}
-function playTone(bus,midi,time,duration,kind,amplitude,tail=0){
+function playTone(bus,midi,time,duration,kind,amplitude,tail=0,attackSeconds=null){
   if(duration<=.01)return;
   const c=bus.context,end=time+duration+tail;
   const partials=kind==='pad'?[[1,1,'triangle'],[2,.08,'sine']]:kind==='harp'?[[1,1,'sine'],[2,.28,'sine'],[3,.08,'sine']]:[[1,1,'sine'],[2,.3,'sine'],[3,.1,'sine'],[4,.035,'sine']];
   partials.forEach(([harmonic,weight,type],i)=>{
     const o=c.createOscillator(),env=c.createGain();o.type=type;o.frequency.value=440*Math.pow(2,(midi-69)/12)*harmonic;
-    const attack=Math.min(kind==='pad'?.3:(tail>0?.018:.009),duration*.2),release=tail>0?tail:Math.min(kind==='pad'?.22:.08,duration*.25),peak=amplitude*weight;
-    env.gain.setValueAtTime(.00001,time);env.gain.exponentialRampToValueAtTime(Math.max(.00002,peak),time+attack);
+    const attack=Math.min(attackSeconds??(kind==='pad'?.3:(tail>0?.018:.009)),duration*.2),release=tail>0?tail:Math.min(kind==='pad'?.22:.08,duration*.25),peak=amplitude*weight;
+    env.gain.setValueAtTime(.00001,time);
+    if(attackSeconds!==null)env.gain.linearRampToValueAtTime(Math.max(.00002,peak),time+attack);
+    else env.gain.exponentialRampToValueAtTime(Math.max(.00002,peak),time+attack);
     const sustainTime=Math.max(time+attack,end-release);
     if(kind==='pad')env.gain.setValueAtTime(Math.max(.00002,peak*.85),sustainTime);
     else env.gain.exponentialRampToValueAtTime(Math.max(.00002,peak*(kind==='harp'?.02:.1)/(1+i)),sustainTime);
@@ -1205,8 +1207,8 @@ function scheduleSequenceChord(run,notes,time,duration,connect=true,arpCore=note
   const corePcs=new Set(arpCore.map(m=>m%12));
   notes.forEach(m=>{
     const color=!corePcs.has(m%12);
-    playTone(run,m,time,Math.min(duration,3.5),'piano',(color?.055:.14)/n,tail*.7);
-    playTone(run,m,time,duration,'pad',(color?.048:.04)/n,tail);
+    playTone(run,m,time,Math.min(duration,3.5),'piano',(color?.055:.14)/n,tail*.7,color?.008:null);
+    playTone(run,m,time,duration,'pad',(color?.048:.04)/n,tail,color?.008:null);
   });
   const settings=soundSettings();run.arps.push(...planArpeggio(notes,time,duration,run.bpm*($('seqMeter').value==='6/8'?1.5:1),settings.pattern,settings.rate,arpCore));
 }
