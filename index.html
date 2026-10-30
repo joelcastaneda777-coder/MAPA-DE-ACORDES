@@ -275,10 +275,16 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 :root[data-theme="light"] .hero-orbit ellipse,:root[data-theme="light"] #solarSystem ellipse{stroke:#497b87;stroke-opacity:.4}
 :root[data-theme="light"] .chord-orbit{border-color:#63959d55}
 @media(max-width:650px){.universe-nav .theme-toggle{font-size:11px;padding:7px 9px;min-height:34px}.universe-nav{gap:8px}.universe-nav .seg{margin-left:0}}
+</style><style>
+.universe-nav #themeToggle{position:relative;flex:0 0 64px;width:64px;height:36px;min-height:36px;padding:3px;border-radius:999px;border:1px solid #9fcbd950;background:linear-gradient(120deg,#112c45,#295067);box-shadow:inset 0 2px 5px #00121f40;cursor:pointer}
+#themeToggle .theme-thumb{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f1f6fb,#bbd0e2);color:#203c56;font-family:system-ui,sans-serif;font-size:22px;line-height:1;box-shadow:0 2px 6px #00172440;transform:translateX(0);transition:transform .28s ease,background .28s ease}
+:root[data-theme="light"] .universe-nav #themeToggle{background:linear-gradient(120deg,#e1eded,#c5dddd);border-color:#aac8cf}
+:root[data-theme="light"] #themeToggle .theme-thumb{transform:translateX(28px);background:linear-gradient(135deg,#fff5ce,#ffd167);color:#825313}
+@media(prefers-reduced-motion:reduce){#themeToggle .theme-thumb{transition:none}}
 </style></head>
 <body>
 <div class="space-shell">
-<header class="universe-nav"><a class="brand" href="#explorar"><span class="brand-mark" aria-hidden="true"></span>Mapa de Acordes</a><nav aria-label="Navegación principal"><a href="#acorde">Explorador</a><a href="#laboratorio">Progresiones</a><a href="#universo">Universo</a><span>Escalas <small>PRONTO</small></span><span>Modos <small>PRONTO</small></span><a href="#teoria">Herramientas</a></nav><button type="button" id="themeToggle" class="btn theme-toggle" aria-label="Cambiar tema">☀ Claro</button><div class="seg" role="group" aria-label="Sistema de notación"><button id="notationUS" aria-pressed="true" type="button">Americano</button><button id="notationLatin" aria-pressed="false" type="button">Latino</button></div></header><main class="workspace" id="main-content">
+<header class="universe-nav"><a class="brand" href="#explorar"><span class="brand-mark" aria-hidden="true"></span>Mapa de Acordes</a><nav aria-label="Navegación principal"><a href="#acorde">Explorador</a><a href="#laboratorio">Progresiones</a><a href="#universo">Universo</a><span>Escalas <small>PRONTO</small></span><span>Modos <small>PRONTO</small></span><a href="#teoria">Herramientas</a></nav><button type="button" id="themeToggle" class="btn theme-toggle" role="switch" aria-checked="false" aria-label="Modo claro"><span class="theme-thumb" aria-hidden="true">☾</span></button><div class="seg" role="group" aria-label="Sistema de notación"><button id="notationUS" aria-pressed="true" type="button">Americano</button><button id="notationLatin" aria-pressed="false" type="button">Latino</button></div></header><main class="workspace" id="main-content">
 <header class="mission-hero" id="explorar"><div class="eyebrow">Explora · escucha · crea</div><h2>Tu próxima <em>órbita.</em></h2><p>Descubre hacia dónde suena.</p><div class="flight-scene" aria-label="Una nave viaja hacia una galaxia de notas"><svg class="flight-art" viewBox="0 0 620 260" aria-hidden="true"><defs><linearGradient id="flightTrail"><stop stop-color="#108ab1" stop-opacity="0"/><stop offset=".6" stop-color="#06d7a0" stop-opacity=".35"/><stop offset="1" stop-color="#ffd167"/></linearGradient><linearGradient id="shipHull" x2=".7" y2="1"><stop stop-color="#f4fbfc"/><stop offset="1" stop-color="#80bac8"/></linearGradient><radialGradient id="galaxyMist"><stop stop-color="#f04770" stop-opacity=".2"/><stop offset=".55" stop-color="#108ab1" stop-opacity=".1"/><stop offset="1" stop-color="#108ab1" stop-opacity="0"/></radialGradient></defs><ellipse cx="444" cy="116" rx="160" ry="110" fill="url(#galaxyMist)"/><g fill="#c4e5e9"><circle cx="53" cy="56" r="1.5"/><circle cx="176" cy="35" r="1"/><circle cx="284" cy="54" r="1.8"/><circle cx="350" cy="222" r="1"/><circle cx="560" cy="219" r="1.5"/><circle cx="580" cy="37" r="1"/><circle cx="110" cy="225" r="1"/></g><path d="M12 230Q94 238 172 191T327 124" fill="none" stroke="#8dd2d6" stroke-opacity=".24" stroke-dasharray="3 7"/><path d="M38 220Q110 232 189 177" fill="none" stroke="url(#flightTrail)" stroke-width="5" stroke-linecap="round"/><g transform="translate(205 164) rotate(53)"><path d="M-8 27Q0 63 8 27" fill="#ffd167"/><path d="M-4 27Q0 47 4 27" fill="#fff1c6"/><path d="M-13 9L-29 33 -10 28M13 9L29 33 10 28" fill="#f04770"/><path d="M0-40Q24-18 12 27H-12Q-24-18 0-40Z" fill="url(#shipHull)" stroke="#e2f5f6" stroke-width="1.5"/><path d="M0-40Q8-32 12-23H-12Q-8-32 0-40" fill="#f78c6a"/><circle cy="-6" r="8" fill="#103440" stroke="#ffffff" stroke-width="3"/><circle cx="-2" cy="-8" r="2" fill="#06d7a0"/><path d="M-10 26H10" stroke="#108ab1" stroke-width="4" stroke-linecap="round"/></g></svg><div id="heroOrbit" class="hero-orbit" aria-label="Notas del acorde en órbita"></div></div></header>
 <div class="app">
   <section class="band top" id="acorde" aria-label="Teoría del acorde">
@@ -1034,9 +1040,10 @@ $('hearUniverse').addEventListener('click',()=>playMidi([...selectedNotes].sort(
 $('universeResults').addEventListener('click',e=>{const b=e.target.closest('[data-match]');if(!b)return;input.value=b.dataset.match;tryInput(true);$('acorde').scrollIntoView({behavior:'smooth',block:'start'});});
 function updateThemeButton(){
  const light=document.documentElement.dataset.theme==='light';
- $('themeToggle').textContent=light?'☾ Oscuro':'☀ Claro';
- $('themeToggle').setAttribute('aria-label',light?'Activar modo oscuro':'Activar modo claro');
- $('themeToggle').setAttribute('aria-pressed',String(light));
+ $('themeToggle').querySelector('.theme-thumb').textContent=light?'☀':'☾';
+ $('themeToggle').setAttribute('aria-label','Modo claro');
+ $('themeToggle').setAttribute('aria-checked',String(light));
+ 
 }
 $('themeToggle').addEventListener('click',()=>{
  const next=document.documentElement.dataset.theme==='light'?'dark':'light';
