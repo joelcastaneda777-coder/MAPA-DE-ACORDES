@@ -205,28 +205,18 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 </style>
 <link rel="stylesheet" href="/cosmic.css">
 <link rel="stylesheet" href="/cosmic-light.css">
+<link rel="stylesheet" href="/universe.css">
 </head>
 <body>
 <div class="space-shell">
-<aside class="sidebar" aria-label="Navegación principal">
-  <a class="brand" href="/" aria-label="Mapa de Acordes, inicio"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">Mapa<br>de Acordes</span></a>
-  <nav class="side-nav" aria-label="Herramientas">
-    <a href="#explorar" class="active"><span class="side-icon" aria-hidden="true">✦</span><span class="nav-label">Explorar</span></a>
-    <a href="#acorde"><span class="side-icon" aria-hidden="true">♬</span><span class="nav-label">Acordes</span></a>
-    <a href="#laboratorio"><span class="side-icon" aria-hidden="true">⌁</span><span class="nav-label">Progresiones</span></a>
-    <a href="#teoria"><span class="side-icon" aria-hidden="true">◎</span><span class="nav-label">Teoría</span></a>
-    <a href="/piano/do-mayor/"><span class="side-icon" aria-hidden="true">▦</span><span class="nav-label">Biblioteca</span></a>
-  </nav>
-  <div class="sidebar-note"><b>Explora.<br>Escucha.<br>Crea.</b><small>Tu universo musical.</small></div>
-</aside>
-<main class="workspace" id="main-content">
-<header class="mission-hero" id="explorar"><div class="eyebrow">Explorador de armonía · Mapa de Acordes</div><h2>Cada acorde<br><em>es un nuevo mundo.</em></h2><p>Explora, escucha y crea tu propio universo musical.</p><span class="orbit-dot" aria-hidden="true"></span></header>
+<header class="universe-nav"><a class="brand" href="#explorar"><span class="brand-mark" aria-hidden="true"></span>Mapa de Acordes</a><nav aria-label="Navegación principal"><a href="#acorde">Explorador</a><a href="#laboratorio">Progresiones</a><a href="#universo">Universo</a><span>Escalas <small>PRONTO</small></span><span>Modos <small>PRONTO</small></span><a href="#teoria">Herramientas</a></nav><div class="seg" role="group" aria-label="Sistema de notación"><button id="notationUS" aria-pressed="true" type="button">Americano</button><button id="notationLatin" aria-pressed="false" type="button">Latino</button></div></header><main class="workspace" id="main-content">
+<header class="mission-hero" id="explorar"><div class="eyebrow">Explorador de armonía · Mapa de Acordes</div><h2>Cada acorde<br><em>es un nuevo mundo.</em></h2><p>Explora, escucha y crea tu propio universo musical.</p><div id="heroOrbit" class="hero-orbit" aria-label="Notas del acorde en órbita"></div></header>
 <div class="app">
   <section class="band top" id="acorde" aria-label="Teoría del acorde">
     <div class="inner">
       <div>
         <div class="eyebrow">Mapa de Acordes</div>
-        <h1 class="sym" id="sym">Cmaj7</h1>
+        <div class="chord-orbit" aria-hidden="true"><i></i><i></i><i></i></div><h1 class="sym" id="sym">Cmaj7</h1>
         <p class="fullname" id="fullname">Do mayor séptima</p>
         <div class="tones" id="tones"></div>
         <div class="actions">
@@ -302,8 +292,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
         <p class="use" id="use"></p>
         <div class="invnote" id="invnote"></div>
       </div></section>
-</div>
+<section class="inversions-card"><h2>Inversiones</h2><div id="inversionChoices"></div></section><section class="variations-card"><h2>Variaciones</h2><div id="variationChoices" class="chips"></div><p class="use">Explora otros colores sobre la misma fundamental.</p></section></div>
 <nav class="band related-nav" aria-label="Explorar acordes"><div class="inner"><strong>Explora acordes:</strong> <a href="/piano/do-mayor/">Do mayor en piano</a> · <a href="/piano/la-menor/">La menor en piano</a> · <a href="/guitarra/sol-mayor/">Sol mayor en guitarra</a> · <a href="/guitarra/la-menor/">La menor en guitarra</a></div></nav>
+<section class="universe-tool" id="universo" aria-labelledby="universeTitle"><div class="eyebrow">Identificador de acordes · por notas</div><h2 id="universeTitle">Construye tu universo</h2><p>¿Recuerdas las notas, pero no el nombre? Añádelas a la órbita y descubre qué acorde forman.</p><div class="universe-layout"><div><div id="notePalette" class="note-palette" role="group" aria-label="Añadir o quitar notas"></div><label class="bass-label">Nota del bajo (opcional)<select id="universeBass"><option value="">Sin especificar</option></select></label><button type="button" class="btn" id="clearUniverse">Limpiar órbita</button><div id="universeResults" aria-live="polite"></div></div><div class="solar-stage"><svg id="solarSystem" viewBox="0 0 500 400" role="img" aria-label="Sistema orbital de las notas seleccionadas"></svg><button type="button" class="btn" id="hearUniverse">▶ Escuchar notas</button></div></div><div id="compatibleModes" class="mode-results"></div><p class="use">Las órbitas representan intervalos. Las escalas mostradas contienen todas las notas seleccionadas; la función armónica depende de la tonalidad y la progresión. Las notas sin registro pueden admitir varios nombres.</p></section>
 <section class="lab" id="laboratorio" aria-labelledby="labTitle">
  <div class="inner">
   <div class="lab-head"><div><div class="eyebrow">Laboratorio armónico</div><h2 id="labTitle">Escucha tu progresión</h2></div><span class="seq-summary" id="seqSummary"></span></div>
@@ -564,11 +555,11 @@ function playMidi(list,gap,simultaneous=false){
 
 /* ---------- Render ---------- */
 const $=id=>document.getElementById(id);
-function render(){renderTop();renderControls();if(state.mode==='piano')renderPiano();else renderGuitar();}
+function render(){renderTop();renderControls();if(state.mode==='piano')renderPiano();else renderGuitar();renderExtras();}
 
 function renderTop(){
   const t=state.tones,Q=state.Q,root=t[0];
-  $('sym').textContent=symbol();
+  $('sym').textContent=displaySymbol();
   let full=root.latin+' '+Q.name;
   if(state.extraBass)full+=' con bajo en '+state.extraBass.latin;
   else if(state.inv>0)full+=' · '+INV_NAMES[state.inv].toLowerCase();
@@ -614,7 +605,7 @@ function renderControls(){
 }
 
 function markHTML(t){
-  const prim=state.label==='note'?t.name:degLabel(t),sec=state.label==='note'?degLabel(t):t.name;
+  const prim=state.label==='note'?displayTone(t):degLabel(t),sec=state.label==='note'?degLabel(t):displayTone(t);
   return{prim:esc(prim),sec:esc(sec)};
 }
 let pianoOctaves=window.matchMedia('(max-width:650px)').matches?1:2;
@@ -627,7 +618,7 @@ function renderPiano(){
     const pc=k%12,isB=[1,3,6,8,10].includes(pc),t=on.get(k),oct=3+Math.floor(k/12);
     if(isB){blacks.push({k,left:wi*W,t});continue;}
     const m=t?markHTML(t):null;
-    html+=`<button type="button" class="wk${t?' on':''}" data-k="${k}" style="${t?'--tone:'+TONE_VAR[t.cls]:''}" aria-label="${t?esc(t.name):'Tecla'} ${oct}">${t?`<span class="mark">${m.prim}</span><span class="sub">${m.sec}</span>`:(pc===0?`<span class="oct">Do${oct}</span>`:'')}</button>`;
+    html+=`<button type="button" class="wk${t?' on':''}" data-k="${k}" style="${t?'--tone:'+TONE_VAR[t.cls]:''}" aria-label="${t?esc(displayTone(t)):'Tecla'} ${oct}">${t?`<span class="mark">${m.prim}</span><span class="sub">${m.sec}</span>`:(pc===0?`<span class="oct">${notation==='latin'?'Do':'C'}${oct}</span>`:'')}</button>`;
     wi++;
   }
   for(const b of blacks){
@@ -640,7 +631,7 @@ function renderPiano(){
   $('pianoOct1').setAttribute('aria-pressed',String(pianoOctaves===1));
   $('pianoOct2').setAttribute('aria-pressed',String(pianoOctaves===2));
   $('pianoHint').textContent=pianoOctaves===1?'Vista compacta · todas las notas':'← Desliza el teclado para ver más teclas →';
-  const names=notes.map(v=>v.t.name).join(' – ');
+  const names=notes.map(v=>displayTone(v.t)).join(' – ');
   $('pianoNote').textContent=`De grave a agudo: ${names}.`+(omitted.length?` Se omitió ${omitted.map(o=>'la '+o.deg+'ª').join(' y ')} para que quepa en dos octavas.`:'')+' Toca cualquier tecla para escucharla.'+(pianoOctaves===1?' Vista compacta: las notas se agrupan en una octava.':'');
 }
 
@@ -842,6 +833,60 @@ for(const id of ['arpPattern','arpRate'])$(id).addEventListener('change',()=>{st
 window.addEventListener('pagehide',()=>stopSequence(false));
 renderSequence();
 
+
+let notation=store.get('mapa-notation')==='latin'?'latin':'us';
+const pitchNames=['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+const selectedNotes=new Set();
+function displayTone(t){return notation==='latin'?t.latin:t.name;}
+function pitchLabel(pc){const n=parseNote(pitchNames[pc],true);return (notation==='latin'?LATIN[n.letter]:n.letter)+accStr(n.acc);}
+function displaySymbol(){return symbol().replace(/[A-G]/g,l=>notation==='latin'?LATIN[l]:l);}
+function renderExtras(){
+  $('notationUS').setAttribute('aria-pressed',notation==='us');$('notationLatin').setAttribute('aria-pressed',notation==='latin');
+  $('tones').innerHTML=state.tones.map(t=>`<span class="tone" style="--tone:${TONE_VAR[t.cls]}"><span class="dot">${esc(degLabel(t))}</span><b>${esc(displayTone(t))}</b><small>${esc(INT_NAME[t.tok]||t.tok)}</small></span>`).join('');
+  $('heroOrbit').innerHTML=orbitSVG(state.tones.map(t=>t.pc),state.tones[0].pc);
+  $('inversionChoices').innerHTML=state.tones.map((t,i)=>`<button class="inversion-choice" type="button" data-inversion="${i}" aria-pressed="${!state.extraBass&&state.inv===i}"><span style="color:${TONE_VAR[t.cls]}">●</span><span><b>${INV_NAMES[i]}</b><small>${state.tones.slice(i).concat(state.tones.slice(0,i)).map(displayTone).join(' · ')}</small></span><small>Bajo: ${esc(displayTone(t))}</small></button>`).join('');
+  const root=state.tones[0].name;
+  $('variationChoices').innerHTML=['maj7','m7','7','add9','maj9','6','69','maj7#11'].filter(k=>QUAL[k]!==state.Q).map(k=>`<button type="button" data-variation="${esc(root+QUAL[k].sym)}">${esc((notation==='latin'?state.tones[0].latin:root)+QUAL[k].sym)}</button>`).join('');
+  renderUniverse();
+}
+function orbitSVG(pcs,root){
+  const colors=['#f04770','#f78c6a','#ffd167','#06d7a0','#42b8d7'];
+  const notes=pcs.filter(pc=>pc!==root).sort((a,b)=>(a-root+12)%12-(b-root+12)%12);
+  let html='<defs><radialGradient id="sunGlow"><stop stop-color="#f04770" stop-opacity=".35"/><stop offset="1" stop-color="#f04770" stop-opacity="0"/></radialGradient></defs><circle cx="250" cy="200" r="100" fill="url(#sunGlow)"/>';
+  notes.forEach((pc,i)=>{const interval=(pc-root+12)%12;const rx=65+interval*12,ry=rx*.58,angle=i*2.399+.5,x=250+Math.cos(angle)*rx,y=200+Math.sin(angle)*ry;const color=colors[interval===4||interval===3?1:interval===7?2:interval===10||interval===11?3:4];html+=`<ellipse cx="250" cy="200" rx="${rx}" ry="${ry}" fill="none" stroke="#a1d8df" stroke-opacity=".22" stroke-dasharray="3 7"/><g><circle cx="${x}" cy="${y}" r="17" fill="${color}"/><text x="${x}" y="${y+4}" text-anchor="middle" fill="#092936" font-size="12" font-weight="700">${pitchLabel(pc)}</text><title>${pitchLabel(pc)} · ${interval} semitonos</title></g>`;});
+  html+=`<circle cx="250" cy="200" r="27" fill="#f04770"/><text x="250" y="205" text-anchor="middle" fill="#092936" font-size="16" font-weight="700">${root==null?'?':pitchLabel(root)}</text>`;
+  return `<svg viewBox="0 0 500 400" role="img" aria-label="Fundamental y notas en órbita">${html}</svg>`;
+}
+function identifyNotes(pcs){
+ const found=[];if(pcs.length<2)return found;
+ for(let root=0;root<12;root++)for(const [key,q] of Object.entries(QUAL)){
+ const expected=[...new Set(q.tones.map(tok=>{const t=tokParse(tok);return(root+DEG_SEMI[t.deg]+t.acc)%12;}))];
+ if(expected.length===pcs.length&&expected.every(pc=>pcs.includes(pc)))found.push({root,key,q});
+ }
+ return found;
+}
+function renderUniverse(){
+ const pcs=[...selectedNotes].sort((a,b)=>a-b),matches=identifyNotes(pcs),bass=$('universeBass').value;
+ $('notePalette').innerHTML=pitchNames.map((n,pc)=>`<button class="planet-choice" type="button" data-pc="${pc}" aria-pressed="${selectedNotes.has(pc)}">${pitchLabel(pc)}</button>`).join('');
+ $('universeBass').innerHTML='<option value="">Sin especificar</option>'+pcs.map(pc=>`<option value="${pc}">${pitchLabel(pc)}</option>`).join('');
+ if(pcs.includes(Number(bass))&&bass!=='')$('universeBass').value=bass;
+ const actualBass=$('universeBass').value;
+ $('universeResults').innerHTML=pcs.length<2?'<p>Añade al menos dos notas para descubrir acordes.</p>':matches.length?'<h3>'+matches.length+' interpretación'+(matches.length===1?'':'es')+'</h3>'+matches.map(m=>{const chord=pitchNames[m.root]+m.q.sym+(actualBass!==''&&+actualBass!==m.root?'/'+pitchNames[actualBass]:'');return `<button type="button" class="match-card" data-match="${esc(chord)}"><b>${pitchLabel(m.root)+esc(m.q.sym)}${actualBass!==''&&+actualBass!==m.root?'/'+pitchLabel(+actualBass):''}</b><span>${pitchLabel(m.root)} ${esc(m.q.name)}</span><small>Abrir en el explorador ↗</small></button>`;}).join(''):'<p>Sin coincidencia exacta en el catálogo actual. Tu combinación sigue siendo válida: puedes escucharla y seguir explorando.</p>';
+ const root=matches.length?matches[0].root:pcs[0];
+ $('solarSystem').innerHTML=orbitSVG(pcs,root).replace(/^<svg[^>]*>|<\/svg>$/g,'');
+ $('hearUniverse').disabled=!pcs.length;
+ const modes=[['jónico',[0,2,4,5,7,9,11]],['dórico',[0,2,3,5,7,9,10]],['frigio',[0,1,3,5,7,8,10]],['lidio',[0,2,4,6,7,9,11]],['mixolidio',[0,2,4,5,7,9,10]],['eólico',[0,2,3,5,7,8,10]],['locrio',[0,1,3,5,6,8,10]]];
+ const compatible=[];if(pcs.length>=2)for(let tonic=0;tonic<12;tonic++)for(const [name,steps] of modes)if(pcs.every(pc=>steps.includes((pc-tonic+12)%12)))compatible.push(pitchLabel(tonic)+' '+name);
+ $('compatibleModes').innerHTML=compatible.length?'<h3>Escalas y modos diatónicos compatibles ('+compatible.length+')</h3><div class="mode-tags">'+compatible.map(x=>'<span>'+x+'</span>').join('')+'</div>':pcs.length>=2?'<p>No hay una escala diatónica de siete notas que contenga toda esta combinación.</p>':'';
+}
+for(const [id,value] of [['notationUS','us'],['notationLatin','latin']])$(id).addEventListener('click',()=>{notation=value;store.set('mapa-notation',value);render();});
+$('inversionChoices').addEventListener('click',e=>{const b=e.target.closest('[data-inversion]');if(!b)return;state.extraBass=null;state.inv=+b.dataset.inversion;state.vIdx=null;vCache=null;render();});
+$('variationChoices').addEventListener('click',e=>{const b=e.target.closest('[data-variation]');if(b){input.value=b.dataset.variation;tryInput(true);}});
+$('notePalette').addEventListener('click',e=>{const b=e.target.closest('[data-pc]');if(!b)return;const pc=+b.dataset.pc;selectedNotes.has(pc)?selectedNotes.delete(pc):selectedNotes.add(pc);renderUniverse();});
+$('universeBass').addEventListener('change',renderUniverse);
+$('clearUniverse').addEventListener('click',()=>{selectedNotes.clear();renderUniverse();});
+$('hearUniverse').addEventListener('click',()=>playMidi([...selectedNotes].sort((a,b)=>a-b).map(pc=>60+pc),0,true));
+$('universeResults').addEventListener('click',e=>{const b=e.target.closest('[data-match]');if(!b)return;input.value=b.dataset.match;tryInput(true);$('acorde').scrollIntoView({behavior:'smooth',block:'start'});});
 const params=new URLSearchParams(location.search);
 const requested=params.get('chord');
 const initialChord=requested&&requested.length<60&&parseChord(requested)?requested:'Cmaj7';
