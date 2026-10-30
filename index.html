@@ -445,6 +445,34 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 #laboratorio .seq-sound>.seq-help{margin:15px 0 0;font-size:10px;line-height:1.6;color:var(--muted)}
 :root[data-theme=light] #laboratorio .seq-sound{background:linear-gradient(140deg,#fff8,#f0477007,#06d7a00c);border-color:#b7cfd3}
 @media(max-width:650px){#laboratorio .seq-sound{grid-column:1;grid-row:auto;order:5;padding:16px}#laboratorio .seq-sound .sound-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}#laboratorio .seq-sound .sound-panel label{min-width:0}#laboratorio .seq-sound .sound-panel label:nth-of-type(-n+3){grid-column:1/-1}#laboratorio .seq-sound .sound-panel label:nth-of-type(4){border-top:0;padding-top:0}}
+</style><style>
+#laboratorio>.inner{grid-template-columns:minmax(0,1fr) minmax(235px,.36fr);grid-template-rows:auto;align-items:start;align-content:start;gap:20px}
+#laboratorio .sequence-main{grid-column:1;display:flex;flex-direction:column;gap:16px;min-width:0;align-self:start}
+#laboratorio .sequence-tools{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#laboratorio .sequence-tools h3{font-size:17px;margin:0}
+#laboratorio .sequence-tools .lab-btn{min-height:36px;padding:8px 13px;font-size:12px}
+#laboratorio .seq-sound{grid-column:2;grid-row:auto;align-self:start;height:auto;min-height:0;max-height:none}
+#laboratorio .seq-rhythm{margin:0;gap:10px}
+#laboratorio #seqRows{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:start;align-content:start;grid-auto-rows:auto;gap:10px}
+#laboratorio #seqRows .seq-row{align-self:start;align-content:start;height:auto;min-height:0;grid-template-rows:auto auto;gap:12px 7px;padding:30px 12px 12px}
+#laboratorio #seqRows label{align-content:start;justify-content:start;min-height:0}
+#laboratorio #seqRows input[data-field=chord]{margin:0;min-height:36px;line-height:1.2}
+#laboratorio .seq-sound .sound-panel{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:16px;min-height:0;height:auto}
+#laboratorio .seq-sound .sound-panel label{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 22px;align-content:start;align-items:center;gap:7px;min-height:0;height:auto;margin:0;padding:0}
+#laboratorio .seq-sound .sound-panel input[type=range]{display:block;width:100%;height:18px;min-height:0;padding:0;margin:0;align-self:center}
+#laboratorio .seq-sound .sound-panel label:nth-of-type(4){padding-top:16px}
+#laboratorio .seq-sound .sound-panel label:nth-of-type(n+4){grid-template-rows:auto 40px}
+#laboratorio .sound-direct-head{padding-bottom:16px}
+#sequencePasteDialog{width:min(580px,calc(100vw - 40px));max-height:85vh;overflow:auto;box-sizing:border-box;border:1px solid #90c8d359;border-radius:22px;padding:22px;background:linear-gradient(130deg,#263d50,#10474d);color:#eff8fa;box-shadow:0 24px 90px #00121c66}
+#sequencePasteDialog::backdrop{background:#001b28a8;backdrop-filter:blur(7px)}
+.paste-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+#laboratorio .paste-dialog-head h3{margin:0;font-size:21px}
+#laboratorio #sequencePasteDialog .seq-import{display:flex;flex-direction:column;align-items:stretch;gap:14px}
+#sequencePasteDialog textarea{width:100%;min-height:100px;box-sizing:border-box;resize:vertical}
+#sequencePasteDialog .seq-help{line-height:1.7}
+:root[data-theme=light] #sequencePasteDialog{background:linear-gradient(130deg,#fff1f4,#edf9f4);color:#173f4c;border-color:#a9cad1}
+@media(max-width:1000px){#laboratorio #seqRows{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){#laboratorio>.inner{grid-template-columns:minmax(0,1fr);gap:16px}#laboratorio .sequence-main,#laboratorio .seq-sound{grid-column:1;grid-row:auto}#laboratorio .sequence-main{order:2}#laboratorio .seq-footer{order:3}#laboratorio .seq-sound{order:4}#laboratorio .harmony-coach{order:5}#laboratorio .seq-state{order:6}#laboratorio>.inner>p:first-of-type{order:1}#laboratorio .seq-sound .sound-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}#laboratorio .seq-sound .sound-panel label:nth-of-type(-n+3){grid-column:1/-1}#laboratorio .seq-sound .sound-panel label:nth-of-type(4){padding-top:0;border-top:0}}
 </style></head>
 <body>
 <div class="space-shell">
@@ -538,16 +566,16 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
  <div class="inner">
   <div class="lab-head"><div><div class="eyebrow">Laboratorio armónico</div><h2 id="labTitle">Tu progresión</h2></div><span class="seq-summary" id="seqSummary"></span></div>
   <p>Prueba tus rearmonizaciones. Elige los acordes y cuánto dura cada uno; un tiempo equivale a una negra al tempo indicado.</p>
-  <details class="seq-paste"><summary>Pegar secuencia</summary><div class="seq-import"><label for="seqQuick">Secuencia rápida<textarea id="seqQuick" rows="2" placeholder="Cmaj7:4 | Am7:2 | Dm7:2 | G7:4" autocomplete="off" spellcheck="false" aria-describedby="seqHelp"></textarea></label><button class="lab-btn" id="seqLoad" type="button">Cargar secuencia</button></div>
+  <div class="sequence-main"><div class="sequence-tools"><h3>Acordes</h3><button type="button" class="lab-btn" id="openSequencePaste">Pegar secuencia</button></div><dialog id="sequencePasteDialog" aria-labelledby="pasteDialogTitle"><div class="paste-dialog-head"><h3 id="pasteDialogTitle">Pega tu progresión</h3><button type="button" class="lab-btn" id="closeSequencePaste" aria-label="Cerrar">×</button></div><div class="seq-import"><label for="seqQuick">Secuencia rápida<textarea id="seqQuick" rows="2" placeholder="Cmaj7:4 | Am7:2 | Dm7:2 | G7:4" autocomplete="off" spellcheck="false" aria-describedby="seqHelp"></textarea></label><button class="lab-btn" id="seqLoad" type="button">Cargar secuencia</button></div>
   <p class="seq-help" id="seqHelp">Separa con |, coma o salto de línea. Usa :4 para cuatro tiempos o :2s para dos segundos. Sin duración, se asignan cuatro tiempos. Usa «-» para un silencio.</p>
-  </details><section class="seq-sound" aria-label="Mezcla e interpretación"><div class="sound-direct-head"><h3>Tu sonido</h3><span>Piano · arpa · pad</span></div><fieldset class="sound-panel"><legend>Sonido · piano dulce, arpa y pad</legend>
+  </dialog><div class="seq-rhythm"><label>Compás<select id="seqMeter"><option value="4/4">4/4</option><option value="3/4">3/4</option><option value="6/8">6/8</option></select></label><span id="seqMeterHint">Negra = BPM · 4 pulsos por compás</span></div><ol class="seq-list" id="seqRows" aria-label="Acordes de la progresión"></ol></div><section class="seq-sound" aria-label="Mezcla e interpretación"><div class="sound-direct-head"><h3>Tu sonido</h3><span>Piano · arpa · pad</span></div><fieldset class="sound-panel"><legend>Sonido · piano dulce, arpa y pad</legend>
  <label>Piano <input id="mixPiano" type="range" min="0" max="100" value="80"><output id="mixPianoValue">80%</output></label>
  <label>Arpa <input id="mixHarp" type="range" min="0" max="100" value="55"><output id="mixHarpValue">55%</output></label>
  <label>Pad <input id="mixPad" type="range" min="0" max="100" value="35"><output id="mixPadValue">35%</output></label>
  <label>Arpegio<select id="arpPattern"><option value="updown">Sube y baja</option><option value="up">Ascendente</option><option value="down">Descendente</option><option value="off">Solo acorde sostenido</option></select></label>
  <label>Movimiento<select id="arpRate"><option value="1">Negras</option><option value="2" selected>Corcheas</option><option value="4">Semicorcheas</option></select></label>
  </fieldset><p class="seq-help">El piano toca juntas las notas del acorde; el arpa las recorre sobre un pad suave. La mezcla se puede ajustar mientras escuchas.</p>
- </section><div class="seq-rhythm"><label>Compás<select id="seqMeter"><option value="4/4">4/4</option><option value="3/4">3/4</option><option value="6/8">6/8</option></select></label><span id="seqMeterHint">Negra = BPM · 4 pulsos por compás</span></div><ol class="seq-list" id="seqRows" aria-label="Acordes de la progresión"></ol>
+ </section>
   <div class="seq-footer"><div class="transport"><button class="lab-btn" id="seqAdd" type="button">+ Añadir acorde</button><button class="lab-btn" id="seqCurrent" type="button">+ Acorde del buscador</button></div><div class="transport"><label for="seqBpm">Tempo <input id="seqBpm" type="number" min="20" max="300" step="1" value="80"> BPM</label><label><input id="seqLoop" type="checkbox"> Repetir</label><button class="lab-btn primary" id="seqPlay" type="button">▶ Reproducir</button><button class="lab-btn" id="seqStop" type="button" disabled>■ Detener</button></div></div>
   <section class="harmony-coach" aria-labelledby="coachTitle"><div class="coach-head"><div><div class="eyebrow">Brújula armónica</div><h3 id="coachTitle">Encuentra tu siguiente paso</h3></div><button type="button" class="coach-auto" id="coachAuto" aria-pressed="true">✦ Automático</button></div><details class="coach-context-picker"><summary><span>Tonalidad y modo</span><span id="coachContextLabel">Explorar posibilidades</span></summary><div class="coach-picker-body"><div class="coach-picker-label">Centro tonal</div><div id="coachRootButtons" class="coach-root-buttons" role="group" aria-label="Centro tonal"></div><div class="coach-picker-label">Modo</div><div id="coachModeButtons" class="coach-mode-buttons" role="group" aria-label="Modo"></div></div></details><select id="coachContext" hidden aria-hidden="true" tabindex="-1"><option value="">Explorar posibilidades</option></select><p id="coachReading"></p><div class="coach-step-label">Analizar acorde</div><div id="coachStepButtons" class="coach-step-buttons" role="group" aria-label="Acorde para analizar"></div><select id="coachStep" hidden aria-hidden="true" tabindex="-1"></select><div id="coachSuggestions" class="coach-suggestions"></div><small>Las funciones dependen de la progresión. Los colores y descripciones son orientativos; escucha las alternativas antes de elegir.</small></section><p class="seq-state" id="seqStatus" role="status" aria-live="polite">Lista para escuchar. Piano y arpa sintetizados con pad; la progresión usa su propio registro de notas.</p>
  </div>
@@ -1419,6 +1447,9 @@ function refreshMeter(){
 $('seqMeter').addEventListener('change',()=>{stopSequence(false);refreshMeter();sequenceSummary();saveSequence();seqMessage('Compás actualizado. Pulsa reproducir.');});
 coachReady=true;refreshMeter();renderCoach();
 
+$('openSequencePaste').addEventListener('click',()=>{$('sequencePasteDialog').showModal();$('seqQuick').focus();});
+$('closeSequencePaste').addEventListener('click',()=>$('sequencePasteDialog').close());
+$('seqLoad').addEventListener('click',()=>{try{parseSequence($('seqQuick').value);$('sequencePasteDialog').close();}catch(e){}});
 const params=new URLSearchParams(location.search);
 const requested=params.get('chord');
 const initialChord=requested&&requested.length<60&&parseChord(requested)?requested:'Cmaj7';
