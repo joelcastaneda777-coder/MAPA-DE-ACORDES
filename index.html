@@ -309,6 +309,38 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 .family-type[aria-pressed="true"]{border-color:var(--c-7);box-shadow:inset 0 0 0 1px var(--c-7);background:#06d7a010}
 .family-browser .use{font-size:12px;line-height:1.6;margin:12px 0 0}
 @media(max-width:650px){.family-browser{padding:13px}.family-tabs{gap:6px}.family-tabs button{font-size:12px;padding:8px 11px}.family-types{grid-template-columns:repeat(2,minmax(0,1fr))}.family-type b{font-size:17px}}
+</style><style>
+.universe-builder{display:flex;flex-direction:column;gap:16px;min-width:0}
+.note-builder,.context-builder{padding:20px;border:1px solid #a8dce529;border-radius:20px;background:linear-gradient(135deg,#ffffff08,#04232d25);box-shadow:inset 0 1px #ffffff0c;min-width:0}
+.builder-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.builder-step{font:10px var(--font-mono);letter-spacing:.13em;color:#a7ced6}
+.universe-tool .builder-heading h3{font-size:18px;margin:7px 0 0;font-weight:500}
+.selection-count{font-size:11px;border:1px solid #a8dce529;background:#ffffff08;border-radius:99px;padding:7px 11px;white-space:nowrap;color:var(--muted)}
+#notePalette{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));grid-template-rows:44px 54px;gap:7px 4px;margin:23px 0 16px}
+#notePalette .planet-choice{position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;min-width:0;min-height:0;padding:5px 0;border-radius:12px;font-size:14px;font-weight:600;box-shadow:inset 0 1px #ffffff18,0 3px 8px #00121d12;transition:background .2s,border-color .2s,transform .2s}
+#notePalette .natural-note{background:linear-gradient(145deg,#306272,#1d4a59);color:#f0f8fa;border-color:#90bac64d}
+#notePalette .accidental-note{background:linear-gradient(145deg,#153b4d,#0b2c3b);color:#bcd8e3;border-color:#6995a547;font-size:12px}
+#notePalette .planet-choice i{width:4px;height:4px;background:currentColor;border-radius:50%;opacity:.25}
+#notePalette .planet-choice[aria-pressed=true]{background:linear-gradient(145deg,#ffedb2,#ffd167);border-color:#ffe5a0;color:#183945;transform:translateY(-2px);box-shadow:0 4px 15px #ffd16720}
+#notePalette .planet-choice[aria-pressed=true] i{opacity:1}
+.selection-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #a8dce51c;padding-top:12px}
+.universe-tool #selectedNoteSummary{margin:0;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+#clearUniverse{flex:none;min-height:34px;font-size:11px;padding:7px 11px;border-radius:999px;background:#ffffff08;box-shadow:none}
+#clearUniverse:disabled{opacity:.4;cursor:default}
+.context-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.context-grid .bass-label{display:flex;flex-direction:column;align-items:stretch;gap:8px;margin:0;font-size:11px;color:var(--muted);min-width:0}
+.context-grid .bass-label:first-child{grid-column:1 / -1}
+.context-grid select{width:100%;max-width:100%;min-width:0;box-sizing:border-box;border-radius:12px;padding:11px 10px;font-size:13px;min-height:43px}
+.universe-tool .context-hint{font-size:11px;line-height:1.6;margin:14px 0 0;color:var(--muted)}
+#universeResults>p{margin:0;padding:0 3px;font-size:12px}
+:root[data-theme="light"] .note-builder,:root[data-theme="light"] .context-builder{background:linear-gradient(135deg,#fff,#edf6f5);border-color:#bdd5d8}
+:root[data-theme="light"] .builder-step{color:#4b7885}
+:root[data-theme="light"] #notePalette .natural-note{background:linear-gradient(145deg,#fff,#e0eeed);color:#234d5b;border-color:#b6cfd3}
+:root[data-theme="light"] #notePalette .accidental-note{background:linear-gradient(145deg,#437181,#264f61);color:#f2f8fb}
+:root[data-theme="light"] #notePalette .planet-choice[aria-pressed=true]{background:linear-gradient(145deg,#fff1bb,#ffd167);color:#183945;border-color:#d7b75f}
+:root[data-theme="light"] .selection-count{border-color:#bdd5d8;background:#fff}
+:root[data-theme="light"] .selection-footer{border-color:#c9dcdf}
+@media(max-width:650px){.note-builder,.context-builder{padding:16px}#notePalette{gap:6px 3px;grid-template-rows:41px 49px}.universe-tool .builder-heading h3{font-size:17px}.builder-step{font-size:9px}.context-grid{gap:12px}}
 </style></head>
 <body>
 <div class="space-shell">
@@ -397,7 +429,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
       </div></section>
 <section class="inversions-card"><h2>Inversiones</h2><div id="inversionChoices"></div></section><section class="variations-card"><h2>Variaciones</h2><div id="variationChoices" class="chips"></div><p class="use">Explora otros colores sobre la misma fundamental.</p></section></div>
 <nav class="band related-nav" aria-label="Explorar acordes"><div class="inner"><strong>Explora acordes:</strong> <a href="/piano/do-mayor/">Do mayor en piano</a> · <a href="/piano/la-menor/">La menor en piano</a> · <a href="/guitarra/sol-mayor/">Sol mayor en guitarra</a> · <a href="/guitarra/la-menor/">La menor en guitarra</a></div></nav>
-<section class="universe-tool" id="universo" aria-labelledby="universeTitle"><div class="eyebrow">Identificador de acordes · por notas</div><h2 id="universeTitle">Construye tu universo</h2><p>¿Recuerdas las notas, pero no el nombre? Añádelas a la órbita y descubre qué acorde forman.</p><div class="universe-layout"><div><div id="notePalette" class="note-palette" role="group" aria-label="Añadir o quitar notas"></div><label class="bass-label">Tonalidad de referencia<select id="galaxyKey"><option value="">Sin tonalidad</option></select></label><label class="bass-label">Interpretación<select id="galaxyReading"><option value="">Automática</option></select></label><label class="bass-label">Nota del bajo (opcional)<select id="universeBass"><option value="">Sin especificar</option></select></label><button type="button" class="btn" id="clearUniverse">Limpiar órbita</button><div id="universeResults" aria-live="polite"></div></div><div class="solar-stage"><svg id="solarSystem" viewBox="0 0 500 400" role="img" aria-label="Sistema orbital de las notas seleccionadas"></svg><div id="galaxyCaption" class="galaxy-caption" aria-live="polite"></div><button type="button" class="btn" id="galaxyPause" aria-pressed="false">Pausar movimiento</button><button type="button" class="btn" id="hearUniverse">▶ Escuchar notas</button></div></div><div id="compatibleModes" class="mode-results"></div><p class="use">Las órbitas representan intervalos. Las escalas mostradas contienen todas las notas seleccionadas; la función armónica depende de la tonalidad y la progresión. Las notas sin registro pueden admitir varios nombres.</p></section>
+<section class="universe-tool" id="universo" aria-labelledby="universeTitle"><div class="eyebrow">Identificador de acordes · por notas</div><h2 id="universeTitle">Construye tu universo</h2><p>¿Recuerdas las notas, pero no el nombre? Añádelas a la órbita y descubre qué acorde forman.</p><div class="universe-layout"><div class="universe-builder"><section class="note-builder"><div class="builder-heading"><div><span class="builder-step">01 · NOTAS</span><h3>Elige tu sonido</h3></div><span id="selectedNoteCount" class="selection-count">0 notas</span></div><div id="notePalette" class="note-palette" role="group" aria-label="Añadir o quitar notas"></div><div class="selection-footer"><p id="selectedNoteSummary" aria-live="polite">Selecciona al menos dos notas</p><button type="button" class="btn clear-orbit" id="clearUniverse" aria-label="Quitar todas las notas">↺ Limpiar</button></div></section><section class="context-builder"><div class="builder-heading"><div><span class="builder-step">02 · CONTEXTO OPCIONAL</span><h3>Dale una dirección</h3></div></div><div class="context-grid"><label class="bass-label">Tonalidad de referencia<select id="galaxyKey"><option value="">Sin tonalidad</option></select></label><label class="bass-label">Interpretación<select id="galaxyReading"><option value="">Automática</option></select></label><label class="bass-label">Nota del bajo (opcional)<select id="universeBass"><option value="">Sin especificar</option></select></label></div><p class="context-hint">El bajo define la inversión; la tonalidad ayuda a interpretar su función.</p></section><div id="universeResults" aria-live="polite"></div></div><div class="solar-stage"><svg id="solarSystem" viewBox="0 0 500 400" role="img" aria-label="Sistema orbital de las notas seleccionadas"></svg><div id="galaxyCaption" class="galaxy-caption" aria-live="polite"></div><button type="button" class="btn" id="galaxyPause" aria-pressed="false">Pausar movimiento</button><button type="button" class="btn" id="hearUniverse">▶ Escuchar notas</button></div></div><div id="compatibleModes" class="mode-results"></div><p class="use">Las órbitas representan intervalos. Las escalas mostradas contienen todas las notas seleccionadas; la función armónica depende de la tonalidad y la progresión. Las notas sin registro pueden admitir varios nombres.</p></section>
 <section class="lab" id="laboratorio" aria-labelledby="labTitle">
  <div class="inner">
   <div class="lab-head"><div><div class="eyebrow">Laboratorio armónico</div><h2 id="labTitle">Escucha tu progresión</h2></div><span class="seq-summary" id="seqSummary"></span></div>
@@ -1136,7 +1168,11 @@ function updateGalaxy(pcs,matches){
 }
 function renderUniverse(){
  const pcs=[...selectedNotes].sort((a,b)=>a-b),matches=identifyNotes(pcs),bass=$('universeBass').value;
- $('notePalette').innerHTML=pitchNames.map((n,pc)=>`<button class="planet-choice" type="button" data-pc="${pc}" aria-pressed="${selectedNotes.has(pc)}">${pitchLabel(pc)}</button>`).join('');
+ const keyPositions={0:[1,2],1:[2,1],2:[3,2],3:[4,1],4:[5,2],5:[7,2],6:[8,1],7:[9,2],8:[10,1],9:[11,2],10:[12,1],11:[13,2]};
+ $('notePalette').innerHTML=pitchNames.map((n,pc)=>{const [col,row]=keyPositions[pc];return `<button class="planet-choice ${row===1?'accidental-note':'natural-note'}" type="button" data-pc="${pc}" style="grid-column:${col} / span 2;grid-row:${row}" aria-label="${pitchLabel(pc)}" aria-pressed="${selectedNotes.has(pc)}"><span>${pitchLabel(pc)}</span><i aria-hidden="true"></i></button>`;}).join('');
+ $('selectedNoteCount').textContent=pcs.length+(pcs.length===1?' nota':' notas');
+ $('selectedNoteSummary').textContent=pcs.length?pcs.map(pitchLabel).join(' · '):'Selecciona al menos dos notas';
+ $('clearUniverse').disabled=!pcs.length;
  $('universeBass').innerHTML='<option value="">Sin especificar</option>'+pcs.map(pc=>`<option value="${pc}">${pitchLabel(pc)}</option>`).join('');
  if(pcs.includes(Number(bass))&&bass!=='')$('universeBass').value=bass;
  const actualBass=$('universeBass').value;
