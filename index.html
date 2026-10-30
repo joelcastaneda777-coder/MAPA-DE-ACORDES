@@ -497,6 +497,12 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 .coach-scale-chords .coach-scale-item button{border:0;border-radius:0;background:transparent;margin:0}
 .coach-scale-chords .coach-scale-item .coach-scale-add{min-width:36px;padding:8px;border-left:1px solid var(--line);font-size:22px;display:grid;place-items:center}
 .coach-scale-item button:hover{background:rgba(128,180,190,.18)}
+</style><style>
+#seqRows .seq-colors{grid-column:1/-1;min-width:0;border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.seq-colors>small{display:block;font-size:10px;color:var(--muted);margin:3px 0 7px}
+.seq-colors>div{display:flex;flex-wrap:wrap;gap:6px}
+.seq-colors button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:1px solid var(--line);border-radius:10px;background:rgba(120,180,190,.1);color:var(--ink);padding:7px 9px;font-size:11px;cursor:pointer}
+.seq-colors button b{font-size:11px}.seq-colors button:hover{background:rgba(0,205,171,.2);border-color:#00cdaa}
 </style></head>
 <body>
 <div class="space-shell">
@@ -1174,7 +1180,7 @@ let seqRun=null,seqTicket=0;
 function seqMessage(message,error=false){$('seqStatus').textContent=message;$('seqStatus').classList.toggle('error',error);}
 function saveSequence(){store.set('mapa-sequence',JSON.stringify({rows:seqDraft,bpm:Number($('seqBpm').value),meter:$('seqMeter').value,loop:$('seqLoop').checked,sound:soundSettings()}));}
 function renderSequence(){
-  $('seqRows').innerHTML=seqDraft.map((r,i)=>`<li class="seq-row" data-row="${i}"><span class="seq-number">${i+1}</span><label>Acorde<input data-field="chord" aria-label="Acorde ${i+1}" spellcheck="false" autocomplete="off" value="${esc(r.chord)}"></label><label>Duración<input data-field="duration" aria-label="Duración ${i+1}" type="number" min="${r.unit==='seconds'?.1:.25}" max="${r.unit==='seconds'?120:64}" step="any" value="${esc(r.duration)}"></label><label>Unidad<select data-field="unit" aria-label="Unidad ${i+1}"><option value="beats" ${r.unit==='beats'?'selected':''}>Pulsos</option><option value="measures" ${r.unit==='measures'?'selected':''}>Compases</option><option value="seconds" ${r.unit==='seconds'?'selected':''}>Segundos</option></select></label><button type="button" class="lab-btn remove" data-remove="${i}" aria-label="Eliminar acorde ${i+1}">×</button></li>`).join('');
+  $('seqRows').innerHTML=seqDraft.map((r,i)=>`<li class="seq-row" data-row="${i}"><span class="seq-number">${i+1}</span><label>Acorde<input data-field="chord" aria-label="Acorde ${i+1}" spellcheck="false" autocomplete="off" value="${esc(r.chord)}"></label><label>Duración<input data-field="duration" aria-label="Duración ${i+1}" type="number" min="${r.unit==='seconds'?.1:.25}" max="${r.unit==='seconds'?120:64}" step="any" value="${esc(r.duration)}"></label><label>Unidad<select data-field="unit" aria-label="Unidad ${i+1}"><option value="beats" ${r.unit==='beats'?'selected':''}>Pulsos</option><option value="measures" ${r.unit==='measures'?'selected':''}>Compases</option><option value="seconds" ${r.unit==='seconds'?'selected':''}>Segundos</option></select></label><button type="button" class="lab-btn remove" data-remove="${i}" aria-label="Eliminar acorde ${i+1}">×</button><div class="seq-colors" data-colors="${i}"></div></li>`).join('');
   sequenceSummary();
 }
 function sequenceSummary(){
@@ -1461,6 +1467,35 @@ function renderCoachControls(){
  $('coachModeButtons').innerHTML=COACH_MODES.map(m=>'<button type="button" data-coach-mode="'+m[0]+'" aria-pressed="'+(!!selected&&id===m[0])+'">'+esc(m[1].split(' · ')[0])+'</button>').join('');
  $('coachStepButtons').innerHTML=seqDraft.map((r,i)=>'<button type="button" data-coach-step="'+i+'" aria-pressed="'+(i===Number($('coachStep').value))+'"><small>'+String(i+1).padStart(2,'0')+'</small><b>'+esc(r.chord)+'</b></button>').join('')||'<span>Añade un acorde para comenzar.</span>';
 }
+function chordColorChoices(chord,scale){
+ const parsed=parseChord(chord);if(!parsed)return [];
+ const pcs=coachChordPcs(chord);
+ return scale.filter(pc=>!pcs.includes(pc)).map(pc=>{
+ const matches=identifyNotes([...pcs,pc]).filter(m=>m.root===parsed.root.pc&&!m.q.omitted);
+ matches.sort((a,b)=> (a.key.includes('add2')?1:0)-(b.key.includes('add2')?1:0));
+ const match=matches[0];if(!match)return null;
+ const name=parsed.root.letter+accStr(parsed.root.acc)+match.q.sym+(parsed.bass?'/'+parsed.bass.letter+accStr(parsed.bass.acc):'');
+ return {pc,chord:name};
+ }).filter(Boolean).slice(0,4);
+}
+function renderSequenceColors(scale){
+ document.querySelectorAll('[data-colors]').forEach(el=>{
+ const i=Number(el.dataset.colors),row=seqDraft[i];if(!row)return;
+ const choices=chordColorChoices(row.chord,scale);
+ el.innerHTML='<small>Explorar color'+(scale.length===12?' · cromático':' · notas del modo')+'</small><div>'+choices.map(c=>'<button type="button" data-color-row="'+i+'" data-color-chord="'+esc(c.chord)+'" title="Aplicar '+esc(c.chord)+'">+ '+pitchLabel(c.pc)+'<b>'+esc(c.chord)+'</b></button>').join('')+(row.colorBase?'<button type="button" data-color-row="'+i+'" data-color-chord="'+esc(row.colorBase)+'" data-color-reset="true">↶ '+esc(row.colorBase)+'</button>':'')+'</div><small>'+(choices.length?'Aplica un color; sonará en la próxima pasada.':'Sin más ampliaciones reconocidas con estas notas.')+'</small>';
+ });
+}
+$('seqRows').addEventListener('click',e=>{
+ const b=e.target.closest('[data-color-chord]');if(!b)return;
+ const i=Number(b.dataset.colorRow),row=seqDraft[i];if(!row||!parseChord(b.dataset.colorChord))return;
+ if(!row.colorBase)row.colorBase=row.chord;
+ row.chord=b.dataset.colorChord;if(b.dataset.colorReset)delete row.colorBase;
+ if(seqRun){const run=seqRun;run.steps[i]={...row,seconds:sequenceSeconds(row,run.bpm,run.meter),notes:sequenceMidi(row.chord)};}
+ renderSequence();saveSequence();
+ if(seqRun)document.querySelectorAll('.seq-row').forEach((el,n)=>el.classList.toggle('active',n===seqRun.active));
+ else playMidi(sequenceMidi(row.chord),0,true);
+ seqMessage(row.chord+(seqRun?' aplicado. Se escuchará la próxima vez que pase por este acorde.':' · escucha el nuevo color.'));
+});
 function renderCoach(){
  const step=$('coachStep'),old=Number(step.value)||0;
  step.innerHTML=seqDraft.map((r,i)=>'<option value="'+i+'">'+(i+1)+'. '+esc(r.chord)+'</option>').join('');
@@ -1471,8 +1506,9 @@ function renderCoach(){
  let chosen=null;
  if(context){const [root,id]=context.split(':');chosen={root:Number(root),mode:COACH_MODES.find(m=>m[0]===id)};}
  else chosen=candidates[0];
- if(!chosen||!chosen.mode){$('coachReading').textContent=seqDraft.length?'No hay una escala del catálogo que contenga todas las notas. Elige un contexto para explorar cromatismos o cambios de tonalidad.':'Añade acordes para explorar su armonía.';$('coachScale').innerHTML='';$('coachSuggestions').innerHTML='';return;}
+ if(!chosen||!chosen.mode){renderSequenceColors(Array.from({length:12},(_,i)=>i));$('coachReading').textContent=seqDraft.length?'No hay una escala del catálogo que contenga todas las notas. Elige un contexto para explorar cromatismos o cambios de tonalidad.':'Añade acordes para explorar su armonía.';$('coachScale').innerHTML='';$('coachSuggestions').innerHTML='';return;}
  const root=chosen.root,mode=chosen.mode,scale=mode[2].map(n=>(root+n)%12);
+ renderSequenceColors(scale);
  const title=pitchLabel(root)+' '+mode[1].toLowerCase();
  $('coachReading').textContent=(context?'Contexto elegido: ':'Lectura posible: ')+title+'. '+mode[3]+(!context&&candidates.length>1?' Hay '+candidates.length+' lecturas compatibles; las notas por sí solas no confirman una tonalidad.':'');
  const roman=['I','II','III','IV','V','VI','VII'];
