@@ -503,7 +503,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 .seq-colors>div{display:flex;flex-wrap:wrap;gap:6px}
 .seq-colors button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:1px solid var(--line);border-radius:10px;background:rgba(120,180,190,.1);color:var(--ink);padding:7px 9px;font-size:11px;cursor:pointer}
 .seq-colors button b{font-size:11px}.seq-colors button:hover{background:rgba(0,205,171,.2);border-color:#00cdaa}
-</style></head>
+</style><style>.seq-colors button[aria-pressed="true"]{background:rgba(0,205,171,.25);border-color:#00cdaa;box-shadow:inset 0 0 0 1px rgba(0,205,171,.3)}.seq-colors button{min-width:42px;min-height:36px;align-items:center;justify-content:center}</style></head>
 <body>
 <div class="space-shell">
 <header class="universe-nav"><a class="brand" href="#explorar"><span class="brand-mark" aria-hidden="true"></span>Mapa de Acordes</a><nav aria-label="Navegación principal"><a href="#acorde">Explorador</a><a href="#laboratorio">Progresiones</a><a href="#universo">Universo</a><span>Escalas <small>PRONTO</small></span><span>Modos <small>PRONTO</small></span><a href="#teoria">Herramientas</a></nav><button type="button" id="themeToggle" class="btn theme-toggle" role="switch" aria-checked="false" aria-label="Modo claro"><span class="theme-thumb" aria-hidden="true">☾</span></button><div class="seg" role="group" aria-label="Sistema de notación"><button id="notationUS" aria-pressed="true" type="button">Americano</button><button id="notationLatin" aria-pressed="false" type="button">Latino</button></div></header><main class="workspace" id="main-content">
@@ -862,14 +862,20 @@ function arpeggioNotes(notes,pattern){
   if(pattern==='updown'&&ordered.length>2)return ordered.concat(ordered.slice(1,-1).reverse());
   return ordered;
 }
-function planArpeggio(notes,start,duration,bpm,pattern,rate){
-  if(pattern==='off'||!notes.length)return [];
-  const ordered=arpeggioNotes(notes,pattern),step=60/bpm/rate,events=[];
-  // El arpa entra después del ataque conjunto del piano y no invade el siguiente acorde.
-  for(let i=0,t=start+step/2;t<start+duration-.025;i++,t=start+step/2+i*step){
-    events.push({midi:ordered[i%ordered.length]+12,time:t,duration:Math.min(step*1.6,start+duration-t),amplitude:.075*(i%rate===0?1:.8)/Math.sqrt(ordered.length)});
-  }
-  return events;
+function planArpeggio(notes,start,duration,bpm,pattern,rate,anchorNotes=notes){
+ if(pattern==='off'||!notes.length)return [];
+ const primary=[...new Set((anchorNotes.length>2?anchorNotes.slice(1):anchorNotes))].sort((a,b)=>a-b).slice(0,3);
+ if(!primary.length)return [];
+ const colors=[...new Set((notes.length>2?notes.slice(1):notes))].filter(n=>!primary.some(p=>p%12===n%12)).sort((a,b)=>a-b);
+ const slots=pattern==='down'?[2,1,0,0]:pattern==='up'?[0,1,2,2]:[0,1,2,1];
+ const step=60/bpm/rate,events=[];
+ // Four stable rhythmic slots: added colors replace a weak slot, never add attacks.
+ for(let i=0,t=start+step/2;t<start+duration-.025;i++,t=start+step/2+i*step){
+   const color=colors.length&&i%4===3;
+   const midi=color?colors[Math.floor(i/4)%colors.length]:primary[Math.min(slots[i%4],primary.length-1)];
+   events.push({midi:midi+12,time:t,duration:Math.min(step*1.35,start+duration-t),amplitude:.075*(color?.55:i%4===0?1:.75)/Math.sqrt(primary.length)});
+ }
+ return events;
 }
 function flushArpeggio(bus,now){
   let count=0;while(count<bus.arps.length&&bus.arps[count].time<now+.15){const e=bus.arps[count++];if(e.time>=now-.03)playTone(bus,e.midi,Math.max(e.time,now+.002),e.duration,'harp',e.amplitude);}
@@ -1175,7 +1181,7 @@ for(const [id,count] of [['pianoOct1',1],['pianoOct2',2]]){
 
 /* ---------- Reproductor de progresiones ---------- */
 let seqDraft=[{chord:'Cmaj7',duration:4,unit:'beats'},{chord:'Am7',duration:4,unit:'beats'},{chord:'Dm7',duration:4,unit:'beats'},{chord:'G7',duration:4,unit:'beats'}];
-try{const saved=JSON.parse(store.get('mapa-sequence'));if(saved&&['3/4','4/4','6/8'].includes(saved.meter))$('seqMeter').value=saved.meter;if(saved&&Array.isArray(saved.rows)&&saved.rows.length&&saved.rows.length<=128){seqDraft=saved.rows.map(r=>sequenceEntry(r.chord,r.duration,r.unit));if(Number.isInteger(saved.bpm)&&saved.bpm>=20&&saved.bpm<=300)$('seqBpm').value=saved.bpm;$('seqLoop').checked=!!saved.loop;if(saved.sound){for(const [name,id] of [['piano','mixPiano'],['harp','mixHarp'],['pad','mixPad']]){const v=Number(saved.sound[name]);if(Number.isFinite(v))$(id).value=Math.round(Math.max(0,Math.min(1,v))*100);}if(['up','down','updown','off'].includes(saved.sound.pattern))$('arpPattern').value=saved.sound.pattern;if([1,2,4].includes(saved.sound.rate))$('arpRate').value=saved.sound.rate;}}}catch(e){}
+try{const saved=JSON.parse(store.get('mapa-sequence'));if(saved&&['3/4','4/4','6/8'].includes(saved.meter))$('seqMeter').value=saved.meter;if(saved&&Array.isArray(saved.rows)&&saved.rows.length&&saved.rows.length<=128){seqDraft=saved.rows.map(r=>syncColorRow({...sequenceEntry(r.chord,r.duration,r.unit),...(parseChord(r.colorBase||'')?{colorBase:r.colorBase,colorNotes:r.colorNotes}: {})}));if(Number.isInteger(saved.bpm)&&saved.bpm>=20&&saved.bpm<=300)$('seqBpm').value=saved.bpm;$('seqLoop').checked=!!saved.loop;if(saved.sound){for(const [name,id] of [['piano','mixPiano'],['harp','mixHarp'],['pad','mixPad']]){const v=Number(saved.sound[name]);if(Number.isFinite(v))$(id).value=Math.round(Math.max(0,Math.min(1,v))*100);}if(['up','down','updown','off'].includes(saved.sound.pattern))$('arpPattern').value=saved.sound.pattern;if([1,2,4].includes(saved.sound.rate))$('arpRate').value=saved.sound.rate;}}}catch(e){}
 let seqRun=null,seqTicket=0;
 function seqMessage(message,error=false){$('seqStatus').textContent=message;$('seqStatus').classList.toggle('error',error);}
 function saveSequence(){store.set('mapa-sequence',JSON.stringify({rows:seqDraft,bpm:Number($('seqBpm').value),meter:$('seqMeter').value,loop:$('seqLoop').checked,sound:soundSettings()}));}
@@ -1194,12 +1200,12 @@ function stopSequence(announce=true){
   $('seqPlay').disabled=false;$('seqStop').disabled=true;
   if(announce)seqMessage('Detenida. Pulsa reproducir para empezar desde el inicio.');
 }
-function scheduleSequenceChord(run,notes,time,duration,connect=true){
+function scheduleSequenceChord(run,notes,time,duration,connect=true,arpCore=notes){
   if(!notes.length)return;const n=Math.sqrt(notes.length);
   // A short release overlaps the next attack without moving the beat.
   const tail=connect?Math.min(.32,duration*.3):0;
   notes.forEach(m=>{playTone(run,m,time,Math.min(duration,3.5),'piano',.14/n,tail*.7);playTone(run,m,time,duration,'pad',.04/n,tail);});
-  const settings=soundSettings();run.arps.push(...planArpeggio(notes,time,duration,run.bpm*($('seqMeter').value==='6/8'?1.5:1),settings.pattern,settings.rate));
+  const settings=soundSettings();run.arps.push(...planArpeggio(notes,time,duration,run.bpm*($('seqMeter').value==='6/8'?1.5:1),settings.pattern,settings.rate,arpCore));
 }
 async function startSequence(){
   stopSequence(false);
@@ -1208,14 +1214,14 @@ async function startSequence(){
     if(!Number.isInteger(bpm)||bpm<20||bpm>300)throw new Error('El tempo debe ser un número entero entre 20 y 300 BPM.');
     if(!seqDraft.length)throw new Error('Añade al menos un acorde.');
     document.querySelectorAll('.seq-row.invalid').forEach(r=>r.classList.remove('invalid'));
-    entries=seqDraft.map((r,i)=>{try{return sequenceEntry(r.chord,r.duration,r.unit)}catch(e){$('seqRows').children[i].classList.add('invalid');throw new Error('Paso '+(i+1)+': '+e.message)}});
+    entries=seqDraft.map((r,i)=>{try{return {...r,...sequenceEntry(r.chord,r.duration,r.unit)}}catch(e){$('seqRows').children[i].classList.add('invalid');throw new Error('Paso '+(i+1)+': '+e.message)}});
   }catch(e){seqMessage(e.message,true);return;}
   const c=ctx();if(!c){seqMessage('Tu navegador no permite reproducir audio.',true);return;}
   const ticket=seqTicket;$('seqPlay').disabled=true;$('seqStop').disabled=false;
   try{await c.resume();if(ticket!==seqTicket)return;if(c.state!=='running')throw Error();}catch(e){if(ticket===seqTicket){stopSequence(false);seqMessage('No se pudo iniciar el audio. Vuelve a pulsar reproducir.',true);}return;}
   saveSequence();
   const run={...makeSoundBus(c),bpm,index:0,nextTime:c.currentTime+.08,events:[],timer:null,loop:$('seqLoop').checked,done:false,active:-1};updateSoundBus(run);seqRun=run;
-  const steps=entries.map(e=>({...e,seconds:sequenceSeconds(e,bpm),notes:sequenceMidi(e.chord)}));
+  const steps=entries.map(e=>({...e,seconds:sequenceSeconds(e,bpm),notes:sequenceRowMidi(e),arpCore:sequenceArpCore(e)}));
   run.steps=steps;run.meter=$('seqMeter').value;
   function tick(){
     if(seqRun!==run)return;
@@ -1223,7 +1229,7 @@ async function startSequence(){
     while(!run.done&&run.nextTime<now+.15){
       const i=run.index,step=steps[i],start=run.nextTime,end=start+step.seconds;
       const next=steps[i+1]||(run.loop?steps[0]:null);
-      scheduleSequenceChord(run,step.notes,start,step.seconds,!next||next.notes.length>0);run.events.push({i,start,end});run.nextTime=end;
+      scheduleSequenceChord(run,step.notes,start,step.seconds,!next||next.notes.length>0,step.arpCore);run.events.push({i,start,end});run.nextTime=end;
       if(++run.index===steps.length){if(run.loop)run.index=0;else run.done=true;}
     }
     flushArpeggio(run,now);
@@ -1238,7 +1244,7 @@ $('seqPlay').addEventListener('click',startSequence);
 $('seqStop').addEventListener('click',()=>stopSequence());
 $('seqRows').addEventListener('input',e=>{
   const field=e.target.dataset.field,row=e.target.closest('[data-row]');if(!field||!row)return;
-  stopSequence(false);const r=seqDraft[+row.dataset.row];r[field]=e.target.value;
+  stopSequence(false);const r=seqDraft[+row.dataset.row];r[field]=e.target.value;if(field==='chord'){delete r.colorBase;delete r.colorNotes;delete r.colorUnidentified;}
   if(field==='unit'){const d=row.querySelector('[data-field="duration"]');d.min=r.unit==='seconds'?.1:.25;d.max=r.unit==='seconds'?120:64;}
   row.classList.remove('invalid');sequenceSummary();saveSequence();seqMessage('Cambios listos. Pulsa reproducir para escucharlos.');
 });
@@ -1248,7 +1254,7 @@ function appendSequence(chord){
  const entry=sequenceEntry(chord,4,'beats'),run=seqRun;
  seqDraft.push(entry);
  if(run){
-   run.steps.push({...entry,seconds:sequenceSeconds(entry,run.bpm,run.meter),notes:sequenceMidi(entry.chord)});
+   run.steps.push({...entry,seconds:sequenceSeconds(entry,run.bpm,run.meter),notes:sequenceRowMidi(entry),arpCore:sequenceArpCore(entry)});
    // Extend the running queue, including its final release, without replacing the audio bus.
    if(run.done){run.done=false;run.nextTime=Math.max(run.nextTime,run.context.currentTime+.03);}
  }
@@ -1448,7 +1454,7 @@ function coachChordPcs(chord){
 function coachCandidates(rows){
  const sounding=rows.filter(r=>parseChord(r.chord));
  if(!sounding.length)return [];
- const all=[...new Set(sounding.flatMap(r=>coachChordPcs(r.chord)))];
+ const all=[...new Set(sounding.flatMap(r=>colorPcs(r)))];
  const last=parseChord(sounding[sounding.length-1].chord).root.pc;
  const first=parseChord(sounding[0].chord).root.pc;
  const result=[];
@@ -1467,34 +1473,54 @@ function renderCoachControls(){
  $('coachModeButtons').innerHTML=COACH_MODES.map(m=>'<button type="button" data-coach-mode="'+m[0]+'" aria-pressed="'+(!!selected&&id===m[0])+'">'+esc(m[1].split(' · ')[0])+'</button>').join('');
  $('coachStepButtons').innerHTML=seqDraft.map((r,i)=>'<button type="button" data-coach-step="'+i+'" aria-pressed="'+(i===Number($('coachStep').value))+'"><small>'+String(i+1).padStart(2,'0')+'</small><b>'+esc(r.chord)+'</b></button>').join('')||'<span>Añade un acorde para comenzar.</span>';
 }
-function chordColorChoices(chord,scale){
- const parsed=parseChord(chord);if(!parsed)return [];
- const pcs=coachChordPcs(chord);
- return scale.filter(pc=>!pcs.includes(pc)).map(pc=>{
- const matches=identifyNotes([...pcs,pc]).filter(m=>m.root===parsed.root.pc&&!m.q.omitted);
- matches.sort((a,b)=> (a.key.includes('add2')?1:0)-(b.key.includes('add2')?1:0));
- const match=matches[0];if(!match)return null;
- const name=parsed.root.letter+accStr(parsed.root.acc)+match.q.sym+(parsed.bass?'/'+parsed.bass.letter+accStr(parsed.bass.acc):'');
- return {pc,chord:name};
- }).filter(Boolean).slice(0,4);
+function colorPcs(row){return [...new Set([...coachChordPcs(row.colorBase||row.chord),...(row.colorNotes||[])])];}
+function syncColorRow(row){
+ if(!row.colorBase)return row;
+ const p=parseChord(row.colorBase);if(!p){delete row.colorBase;delete row.colorNotes;return row;}
+ const base=coachChordPcs(row.colorBase);
+ row.colorNotes=[...new Set((row.colorNotes||coachChordPcs(row.chord).filter(pc=>!base.includes(pc))).filter(pc=>Number.isInteger(pc)&&pc>=0&&pc<12&&!base.includes(pc)))];
+ if(!row.colorNotes.length){row.chord=row.colorBase;row.colorUnidentified=false;return row;}
+ const matches=identifyNotes(colorPcs(row)).filter(m=>m.root===p.root.pc&&!m.q.omitted);
+ matches.sort((a,b)=>(a.key.includes('add2')?1:0)-(b.key.includes('add2')?1:0));
+ const m=matches[0];row.colorUnidentified=!m;
+ row.chord=m?p.root.letter+accStr(p.root.acc)+m.q.sym+(p.bass?'/'+p.bass.letter+accStr(p.bass.acc):''):row.colorBase;
+ return row;
+}
+function sequenceRowMidi(row){
+ const base=sequenceMidi(row.colorBase||row.chord);
+ return [...base,...(row.colorNotes||[]).filter(pc=>!base.some(n=>n%12===pc)).map(pc=>60+pc)];
+}
+function sequenceArpCore(row){
+ const p=parseChord(row.colorBase||row.chord);if(!p)return [];
+ const core=QUAL[p.q].tones.slice(0,3).map(t=>{const d=tokParse(t);return 48+p.root.pc+(DEG_SEMI[d.deg]+d.acc)%12;});
+ return [36+(p.bass?p.bass.pc:p.root.pc),...core];
 }
 function renderSequenceColors(scale){
  document.querySelectorAll('[data-colors]').forEach(el=>{
- const i=Number(el.dataset.colors),row=seqDraft[i];if(!row)return;
- const choices=chordColorChoices(row.chord,scale);
- el.innerHTML='<small>Explorar color'+(scale.length===12?' · cromático':' · notas del modo')+'</small><div>'+choices.map(c=>'<button type="button" data-color-row="'+i+'" data-color-chord="'+esc(c.chord)+'" title="Aplicar '+esc(c.chord)+'">+ '+pitchLabel(c.pc)+'<b>'+esc(c.chord)+'</b></button>').join('')+(row.colorBase?'<button type="button" data-color-row="'+i+'" data-color-chord="'+esc(row.colorBase)+'" data-color-reset="true">↶ '+esc(row.colorBase)+'</button>':'')+'</div><small>'+(choices.length?'Aplica un color; sonará en la próxima pasada.':'Sin más ampliaciones reconocidas con estas notas.')+'</small>';
+ const i=Number(el.dataset.colors),row=seqDraft[i];if(!row||!parseChord(row.chord))return;
+ syncColorRow(row);
+ const base=coachChordPcs(row.colorBase||row.chord),selected=row.colorNotes||[];
+ const choices=[...new Set([...scale,...selected])].filter(pc=>!base.includes(pc));
+ el.innerHTML='<small>Notas de color'+(scale.length===12?' · cromáticas':' · del modo')+'</small><div>'+choices.map(pc=>{
+ const active=selected.includes(pc);
+ return '<button type="button" data-color-row="'+i+'" data-color-pc="'+pc+'" aria-pressed="'+active+'" aria-label="'+(active?'Quitar ':'Añadir ')+pitchLabel(pc)+'">'+(active?'✓ ':'+ ')+pitchLabel(pc)+'</button>';
+ }).join('')+'</div><small>'+(row.colorUnidentified?'Combinación sin nombre exacto: '+row.colorBase+' + '+selected.map(pitchLabel).join(', ')+'.':selected.length?'Activas: '+selected.map(pitchLabel).join(' · ')+'.':'Activa notas para explorar.')+' El arpegio conserva su pulso.</small>';
  });
 }
 $('seqRows').addEventListener('click',e=>{
- const b=e.target.closest('[data-color-chord]');if(!b)return;
- const i=Number(b.dataset.colorRow),row=seqDraft[i];if(!row||!parseChord(b.dataset.colorChord))return;
+ const b=e.target.closest('[data-color-pc]');if(!b)return;
+ const i=Number(b.dataset.colorRow),row=seqDraft[i],pc=Number(b.dataset.colorPc);
+ if(!row||!parseChord(row.chord))return;
  if(!row.colorBase)row.colorBase=row.chord;
- row.chord=b.dataset.colorChord;if(b.dataset.colorReset)delete row.colorBase;
- if(seqRun){const run=seqRun;run.steps[i]={...row,seconds:sequenceSeconds(row,run.bpm,run.meter),notes:sequenceMidi(row.chord)};}
+ syncColorRow(row);
+ row.colorNotes=row.colorNotes.includes(pc)?row.colorNotes.filter(n=>n!==pc):[...row.colorNotes,pc];
+ syncColorRow(row);
+ if(seqRun){const run=seqRun;run.steps[i]={...row,seconds:sequenceSeconds(row,run.bpm,run.meter),notes:sequenceRowMidi(row),arpCore:sequenceArpCore(row)};}
  renderSequence();saveSequence();
  if(seqRun)document.querySelectorAll('.seq-row').forEach((el,n)=>el.classList.toggle('active',n===seqRun.active));
- else playMidi(sequenceMidi(row.chord),0,true);
- seqMessage(row.chord+(seqRun?' aplicado. Se escuchará la próxima vez que pase por este acorde.':' · escucha el nuevo color.'));
+ else playMidi(sequenceRowMidi(row),0,true);
+ const next=$('seqRows').querySelector('[data-color-row="'+i+'"][data-color-pc="'+pc+'"]');if(next)next.focus({preventScroll:true});
+ seqMessage(row.chord+(seqRun?' actualizado para la próxima pasada.':' · escucha el color seleccionado.'));
 });
 function renderCoach(){
  const step=$('coachStep'),old=Number(step.value)||0;
@@ -1520,7 +1546,7 @@ function renderCoach(){
  }).join('');
  $('coachScale').innerHTML='<h4>Acordes de '+esc(title)+'</h4><p>Notas: '+scale.map(pitchLabel).join(' · ')+'. Estas tríadas usan solo notas del modo. Toca el acorde para escucharlo y + para añadirlo a tu secuencia.</p><div class="coach-scale-chords">'+diatonic+'</div><p>Elegir un modo orienta las sugerencias; no cambia tus acordes. Usa + para construir tu progresión en el orden que prefieras.</p>';
  if(!parsed){$('coachSuggestions').innerHTML='<p>Selecciona un acorde válido para ver sugerencias.</p>';return;}
- const pcs=coachChordPcs(row.chord),outside=pcs.filter(pc=>!scale.includes(pc));
+ const pcs=colorPcs(row),outside=pcs.filter(pc=>!scale.includes(pc));
  const minor=mode[2].includes(3),tonicKey=mode[0]==='locrian'?'dim':minor?'m':'maj';
  const home=pitchNames[root]+QUAL[tonicKey].sym;
  const directionDegree=mode[0]==='dorian'?3:4;
