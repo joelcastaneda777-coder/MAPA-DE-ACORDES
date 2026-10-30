@@ -492,6 +492,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 .paste-duration{display:flex;align-items:center;gap:12px;margin-top:16px}.paste-duration select{padding:8px;border-radius:10px;background:var(--surface);color:var(--ink);border:1px solid var(--line)}
 .paste-preview,.coach-scale-chords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.paste-preview span,.coach-scale-chords button{padding:9px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(128,180,190,.09);color:var(--ink)}.paste-preview .invalid{color:#ff9d98;border-color:#ff9d98}
 .coach-scale{margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:16px}.coach-scale h4{margin:0 0 8px}.coach-scale p{font-size:13px;color:var(--muted)}.coach-scale-chords button{display:grid;gap:4px;min-width:70px;cursor:pointer}.coach-scale-chords small{font-size:10px;color:var(--muted)}#seqLoad:disabled{opacity:.45;cursor:default}
+</style><style>
+.coach-scale-item{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:rgba(128,180,190,.09)}
+.coach-scale-chords .coach-scale-item button{border:0;border-radius:0;background:transparent;margin:0}
+.coach-scale-chords .coach-scale-item .coach-scale-add{min-width:36px;padding:8px;border-left:1px solid var(--line);font-size:22px;display:grid;place-items:center}
+.coach-scale-item button:hover{background:rgba(128,180,190,.18)}
 </style></head>
 <body>
 <div class="space-shell">
@@ -1454,9 +1459,9 @@ function renderCoach(){
  const third=(scale[(i+2)%7]-pc+12)%12,fifth=(scale[(i+4)%7]-pc+12)%12;
  const q=fifth===6?'dim':fifth===8?'aug':third===3?'m':'maj';
  const chord=pitchNames[pc]+QUAL[q].sym;
- return '<button type="button" data-coach-preview="'+esc(chord)+'"><small>'+roman[i]+'</small><b>'+esc(chord)+'</b></button>';
+ return '<div class="coach-scale-item"><button type="button" data-coach-preview="'+esc(chord)+'" aria-label="Escuchar '+esc(chord)+'"><small>'+roman[i]+'</small><b>'+esc(chord)+'</b></button><button type="button" class="coach-scale-add" data-coach-add="'+esc(chord)+'" aria-label="Añadir '+esc(chord)+' a la secuencia" title="Añadir a la secuencia">+</button></div>';
  }).join('');
- $('coachScale').innerHTML='<h4>Acordes de '+esc(title)+'</h4><p>Notas: '+scale.map(pitchLabel).join(' · ')+'. Estas tríadas usan solo notas del modo. Toca una para escucharla.</p><div class="coach-scale-chords">'+diatonic+'</div><p>Elegir un modo orienta las sugerencias; no cambia tus acordes. Para añadir uno, escríbelo en la progresión.</p>';
+ $('coachScale').innerHTML='<h4>Acordes de '+esc(title)+'</h4><p>Notas: '+scale.map(pitchLabel).join(' · ')+'. Estas tríadas usan solo notas del modo. Toca el acorde para escucharlo y + para añadirlo a tu secuencia.</p><div class="coach-scale-chords">'+diatonic+'</div><p>Elegir un modo orienta las sugerencias; no cambia tus acordes. Usa + para construir tu progresión en el orden que prefieras.</p>';
  if(!parsed){$('coachSuggestions').innerHTML='<p>Selecciona un acorde válido para ver sugerencias.</p>';return;}
  const pcs=coachChordPcs(row.chord),outside=pcs.filter(pc=>!scale.includes(pc));
  const minor=mode[2].includes(3),tonicKey=mode[0]==='locrian'?'dim':minor?'m':'maj';
@@ -1476,7 +1481,11 @@ $('coachRootButtons').addEventListener('click',e=>{const b=e.target.closest('[da
 $('coachModeButtons').addEventListener('click',e=>{const b=e.target.closest('[data-coach-mode]');if(!b)return;const root=$('coachContext').value.split(':')[0]||'0';$('coachContext').value=root+':'+b.dataset.coachMode;renderCoach();});
 $('coachStepButtons').addEventListener('click',e=>{const b=e.target.closest('[data-coach-step]');if(!b)return;$('coachStep').value=b.dataset.coachStep;renderCoach();});
 $('coachStep').addEventListener('change',renderCoach);
-$('coachScale').addEventListener('click',e=>{const b=e.target.closest('[data-coach-preview]');if(b)playMidi(sequenceMidi(b.dataset.coachPreview),0,true);});
+$('coachScale').addEventListener('click',e=>{
+ const add=e.target.closest('[data-coach-add]'),b=e.target.closest('[data-coach-preview]');
+ if(add){const chord=add.dataset.coachAdd;appendSequence(chord);seqMessage(chord+' añadido a la secuencia.');const next=[...$('coachScale').querySelectorAll('[data-coach-add]')].find(x=>x.dataset.coachAdd===chord);if(next)next.focus({preventScroll:true});}
+ if(b)playMidi(sequenceMidi(b.dataset.coachPreview),0,true);
+});
 $('coachSuggestions').addEventListener('click',e=>{
  const add=e.target.closest('[data-coach-add]'),preview=e.target.closest('[data-coach-preview]'),note=e.target.closest('[data-coach-note]');
  if(add){appendSequence(add.dataset.coachAdd);renderCoach();}
