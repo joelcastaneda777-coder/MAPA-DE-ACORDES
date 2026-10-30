@@ -348,6 +348,63 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 .note-registers select{width:100%;min-width:0;border:0;border-radius:7px;padding:7px 3px;background:var(--surface);color:var(--ink);font-size:12px}
 .universe-tool .register-help{font-size:11px;color:var(--muted);line-height:1.5;margin:10px 0 14px}
 .note-registers:empty+.register-help{display:none}
+</style><style>
+#laboratorio{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 8% 0%,#f0477038,transparent 42%),radial-gradient(ellipse at 94% 12%,#06d7a03d,transparent 48%),linear-gradient(125deg,#153b50,#103b49 55%,#10545a);border:1px solid #a3d7de45;box-shadow:inset 0 1px #ffffff18,0 16px 40px #00192220;padding:26px}
+#laboratorio>.inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,.4fr);gap:18px;min-width:0}
+#laboratorio .lab-head,#laboratorio>.inner>p:first-of-type,#laboratorio .seq-footer,#laboratorio .seq-state,#laboratorio .harmony-coach{grid-column:1/-1}
+#laboratorio .lab-head{margin:0}#laboratorio .lab-head h2{font-size:30px}
+#laboratorio>.inner>p:first-of-type{margin:0;font-size:13px}
+#laboratorio details{border:1px solid #b0dce22d;background:#0d2e3c40;border-radius:16px;padding:14px;min-width:0}
+#laboratorio details summary{cursor:pointer;font-size:13px;font-weight:600;min-height:24px;line-height:24px}
+#laboratorio .seq-paste{grid-column:1;grid-row:3;align-self:start}
+#laboratorio .seq-sound{grid-column:2;grid-row:3/6}
+#laboratorio .seq-sound .sound-panel{display:flex;flex-direction:column;gap:18px;border:0;padding:16px 0 0;background:none}
+#laboratorio .seq-sound legend{display:none}
+#laboratorio .sound-panel label{display:grid;grid-template-columns:1fr auto;gap:9px;font-size:12px}
+#laboratorio .sound-panel input,#laboratorio .sound-panel select{grid-column:1/-1;max-width:100%;min-width:0}
+#laboratorio .sound-panel input[type=range]{accent-color:#06d7a0;width:100%;margin:0}
+#laboratorio .seq-help{font-size:11px;line-height:1.6}
+#laboratorio .seq-rhythm{grid-column:1;display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.seq-rhythm label{font-size:12px;display:flex;gap:8px;align-items:center}
+#seqMeterHint{font-size:11px;color:#c4dce4}
+#laboratorio #seqRows{grid-column:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0;padding:0;min-width:0}
+#laboratorio #seqRows .seq-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 6px;background:#ffffff06;border:1px solid #a3d7de38;border-radius:15px;padding:35px 12px 13px;min-width:0;overflow:hidden}
+#laboratorio #seqRows .seq-row.active{border-color:#06d7a0;background:#06d7a015;box-shadow:inset 0 -3px #06d7a0}
+#laboratorio #seqRows .seq-row.invalid{border-color:#f78c6a}
+#seqRows .seq-number{position:absolute;top:12px;left:13px;font-size:11px;color:#b4d3dd}
+#laboratorio #seqRows label{display:flex;flex-direction:column;font-size:10px;gap:6px;min-width:0}
+#seqRows label:first-of-type{grid-column:1/-1}
+#laboratorio #seqRows input[data-field=chord]{font-size:clamp(16px,1.6vw,25px);font-weight:600;padding:8px 2px;border:0;background:transparent;border-radius:4px;min-width:0;width:100%;box-sizing:border-box;color:#fff}
+#laboratorio #seqRows input[type=number],#laboratorio #seqRows select{padding:7px 3px;font-size:11px;min-width:0;width:100%;box-sizing:border-box;border-radius:7px}
+#laboratorio #seqRows .remove{position:absolute;right:7px;top:6px;padding:3px 7px;min-height:24px;background:none;border:0;font-size:17px;opacity:.65}
+#laboratorio .seq-footer{border:1px solid #a3d7de38;border-radius:16px;background:linear-gradient(110deg,#f0477010,#ffffff06,#06d7a018);backdrop-filter:blur(18px);padding:14px;margin:0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#laboratorio .lab-btn,#laboratorio .coach-card button{border:1px solid #b4dae13d;border-radius:12px;background:#ffffff0a;box-shadow:inset 0 1px #ffffff13;color:#f3fafb;cursor:pointer}
+#laboratorio .lab-btn.primary{background:linear-gradient(130deg,#b1f4de,#06d7a0);color:#123440;border-color:#89e9cd}
+#laboratorio input,#laboratorio select,#laboratorio textarea{background:#123947b3;color:#e7f5f7;border-color:#a0ccd43d}
+.harmony-coach{border:1px solid #b4dae12d;border-radius:18px;background:linear-gradient(120deg,#f0477010,#ffffff04,#06d7a00c);padding:20px;min-width:0}
+.coach-head{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.coach-head h3{font-size:19px;margin:7px 0 0}
+.coach-head label,.coach-step-label{font-size:11px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.coach-head select{max-width:250px}
+#coachReading{font-size:13px;line-height:1.7}
+.coach-suggestions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:15px 0}
+.coach-card{padding:15px;border:1px solid #b4dae120;border-radius:14px;background:#072b3928;min-width:0}
+.coach-card h4{margin:0 0 9px;font-size:14px}
+.coach-card p{font-size:12px;line-height:1.6;margin:0 0 12px}
+#laboratorio .coach-card button{padding:8px 10px;margin:0 5px 6px 0;font-size:11px}
+.harmony-coach>small{display:block;color:#b9d6de;font-size:10px;line-height:1.6}
+.coach-outside{color:#ffcca8!important}
+:root[data-theme="light"] #laboratorio{background:radial-gradient(ellipse at 6% 0%,#f047701c,transparent 42%),radial-gradient(ellipse at 95% 15%,#06d7a029,transparent 48%),#f4faf9;border-color:#b3ced1;color:#153c48}
+:root[data-theme="light"] #laboratorio details,:root[data-theme="light"] #laboratorio .seq-footer,:root[data-theme="light"] .harmony-coach{background:#ffffff65;border-color:#b7cfd3}
+:root[data-theme="light"] #laboratorio #seqRows .seq-row,:root[data-theme="light"] .coach-card{background:#ffffff70;border-color:#b7cfd3}
+:root[data-theme="light"] #laboratorio #seqRows input[data-field=chord]{color:#173f4c}
+:root[data-theme="light"] #laboratorio input,:root[data-theme="light"] #laboratorio select,:root[data-theme="light"] #laboratorio textarea{background:#ffffffa0;color:#173f4c;border-color:#aecbd0}
+:root[data-theme="light"] #laboratorio .lab-btn,:root[data-theme="light"] #laboratorio .coach-card button{background:#ffffff80;color:#173f4c;border-color:#aecbd0}
+:root[data-theme="light"] #laboratorio .lab-btn.primary{background:#89e5c6}
+:root[data-theme="light"] #seqMeterHint,:root[data-theme="light"] .harmony-coach>small,:root[data-theme="light"] #seqRows .seq-number{color:#446d79}
+:root[data-theme="light"] .coach-outside{color:#8c4737!important}
+@media(max-width:1000px){#laboratorio #seqRows{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){#laboratorio{padding:17px}#laboratorio>.inner{grid-template-columns:minmax(0,1fr);gap:14px}#laboratorio .seq-paste,#laboratorio .seq-rhythm,#laboratorio #seqRows,#laboratorio .seq-sound{grid-column:1;grid-row:auto}#laboratorio .seq-sound{order:5}#laboratorio .seq-footer{order:4}#laboratorio .harmony-coach{order:6}#laboratorio .seq-state{order:7}#laboratorio #seqRows input[data-field=chord]{font-size:24px}.coach-suggestions{grid-template-columns:minmax(0,1fr)}.harmony-coach{padding:15px}.coach-head select{max-width:100%}#laboratorio .transport{flex-wrap:wrap}}
 </style></head>
 <body>
 <div class="space-shell">
@@ -439,20 +496,20 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 <section class="universe-tool" id="universo" aria-labelledby="universeTitle"><div class="eyebrow">Identificador de acordes · por notas</div><h2 id="universeTitle">Construye tu universo</h2><p>¿Recuerdas las notas, pero no el nombre? Añádelas a la órbita y descubre qué acorde forman.</p><div class="universe-layout"><div class="universe-builder"><section class="note-builder"><div class="builder-heading"><div><span class="builder-step">01 · NOTAS</span><h3>Elige tu sonido</h3></div><span id="selectedNoteCount" class="selection-count">0 notas</span></div><div id="notePalette" class="note-palette" role="group" aria-label="Añadir o quitar notas"></div><div id="noteRegisters" class="note-registers" role="group" aria-label="Octava de cada nota"></div><p class="register-help">Elige la octava de cada nota. Do4 es el Do central; la nota más grave determina el bajo.</p><div class="selection-footer"><p id="selectedNoteSummary" aria-live="polite">Selecciona al menos dos notas</p><button type="button" class="btn clear-orbit" id="clearUniverse" aria-label="Quitar todas las notas">↺ Limpiar</button></div></section><section class="context-builder"><div class="builder-heading"><div><span class="builder-step">02 · CONTEXTO OPCIONAL</span><h3>Dale una dirección</h3></div></div><div class="context-grid"><label class="bass-label">Tonalidad de referencia<select id="galaxyKey"><option value="">Sin tonalidad</option></select></label><label class="bass-label">Interpretación<select id="galaxyReading"><option value="">Automática</option></select></label><label class="bass-label">Nota del bajo (opcional)<select id="universeBass"><option value="">Sin especificar</option></select></label></div><p class="context-hint">El bajo define la inversión; la tonalidad ayuda a interpretar su función.</p></section><div id="universeResults" aria-live="polite"></div></div><div class="solar-stage"><svg id="solarSystem" viewBox="0 0 500 400" role="img" aria-label="Sistema orbital de las notas seleccionadas"></svg><div id="galaxyCaption" class="galaxy-caption" aria-live="polite"></div><button type="button" class="btn" id="galaxyPause" aria-pressed="false">Pausar movimiento</button><button type="button" class="btn" id="hearUniverse">▶ Escuchar notas</button></div></div><div id="compatibleModes" class="mode-results"></div><p class="use">Las órbitas representan intervalos. Las escalas mostradas contienen todas las notas seleccionadas; la función armónica depende de la tonalidad y la progresión. Las notas sin registro pueden admitir varios nombres.</p></section>
 <section class="lab" id="laboratorio" aria-labelledby="labTitle">
  <div class="inner">
-  <div class="lab-head"><div><div class="eyebrow">Laboratorio armónico</div><h2 id="labTitle">Escucha tu progresión</h2></div><span class="seq-summary" id="seqSummary"></span></div>
+  <div class="lab-head"><div><div class="eyebrow">Laboratorio armónico</div><h2 id="labTitle">Tu progresión</h2></div><span class="seq-summary" id="seqSummary"></span></div>
   <p>Prueba tus rearmonizaciones. Elige los acordes y cuánto dura cada uno; un tiempo equivale a una negra al tempo indicado.</p>
-  <div class="seq-import"><label for="seqQuick">Secuencia rápida<textarea id="seqQuick" rows="2" placeholder="Cmaj7:4 | Am7:2 | Dm7:2 | G7:4" autocomplete="off" spellcheck="false" aria-describedby="seqHelp"></textarea></label><button class="lab-btn" id="seqLoad" type="button">Cargar secuencia</button></div>
+  <details class="seq-paste"><summary>Pegar secuencia</summary><div class="seq-import"><label for="seqQuick">Secuencia rápida<textarea id="seqQuick" rows="2" placeholder="Cmaj7:4 | Am7:2 | Dm7:2 | G7:4" autocomplete="off" spellcheck="false" aria-describedby="seqHelp"></textarea></label><button class="lab-btn" id="seqLoad" type="button">Cargar secuencia</button></div>
   <p class="seq-help" id="seqHelp">Separa con |, coma o salto de línea. Usa :4 para cuatro tiempos o :2s para dos segundos. Sin duración, se asignan cuatro tiempos. Usa «-» para un silencio.</p>
-  <fieldset class="sound-panel"><legend>Sonido · piano dulce, arpa y pad</legend>
+  </details><details class="seq-sound"><summary>Sonido y arpegio</summary><fieldset class="sound-panel"><legend>Sonido · piano dulce, arpa y pad</legend>
  <label>Piano <input id="mixPiano" type="range" min="0" max="100" value="80"><output id="mixPianoValue">80%</output></label>
  <label>Arpa <input id="mixHarp" type="range" min="0" max="100" value="55"><output id="mixHarpValue">55%</output></label>
  <label>Pad <input id="mixPad" type="range" min="0" max="100" value="35"><output id="mixPadValue">35%</output></label>
  <label>Arpegio<select id="arpPattern"><option value="updown">Sube y baja</option><option value="up">Ascendente</option><option value="down">Descendente</option><option value="off">Solo acorde sostenido</option></select></label>
  <label>Movimiento<select id="arpRate"><option value="1">Negras</option><option value="2" selected>Corcheas</option><option value="4">Semicorcheas</option></select></label>
  </fieldset><p class="seq-help">El piano toca juntas las notas del acorde; el arpa las recorre sobre un pad suave. La mezcla se puede ajustar mientras escuchas.</p>
- <ol class="seq-list" id="seqRows" aria-label="Acordes de la progresión"></ol>
+ </details><div class="seq-rhythm"><label>Compás<select id="seqMeter"><option value="4/4">4/4</option><option value="3/4">3/4</option><option value="6/8">6/8</option></select></label><span id="seqMeterHint">Negra = BPM · 4 pulsos por compás</span></div><ol class="seq-list" id="seqRows" aria-label="Acordes de la progresión"></ol>
   <div class="seq-footer"><div class="transport"><button class="lab-btn" id="seqAdd" type="button">+ Añadir acorde</button><button class="lab-btn" id="seqCurrent" type="button">+ Acorde del buscador</button></div><div class="transport"><label for="seqBpm">Tempo <input id="seqBpm" type="number" min="20" max="300" step="1" value="80"> BPM</label><label><input id="seqLoop" type="checkbox"> Repetir</label><button class="lab-btn primary" id="seqPlay" type="button">▶ Reproducir</button><button class="lab-btn" id="seqStop" type="button" disabled>■ Detener</button></div></div>
-  <p class="seq-state" id="seqStatus" role="status" aria-live="polite">Lista para escuchar. Piano y arpa sintetizados con pad; la progresión usa su propio registro de notas.</p>
+  <section class="harmony-coach" aria-labelledby="coachTitle"><div class="coach-head"><div><div class="eyebrow">Brújula armónica</div><h3 id="coachTitle">Encuentra tu siguiente paso</h3></div><label>Contexto<select id="coachContext"><option value="">Explorar posibilidades</option></select></label></div><p id="coachReading"></p><label class="coach-step-label">Analizar acorde<select id="coachStep"></select></label><div id="coachSuggestions" class="coach-suggestions"></div><small>Las funciones dependen de la progresión. Los colores y descripciones son orientativos; escucha las alternativas antes de elegir.</small></section><p class="seq-state" id="seqStatus" role="status" aria-live="polite">Lista para escuchar. Piano y arpa sintetizados con pad; la progresión usa su propio registro de notas.</p>
  </div>
 </section>
 <footer class="space-footer">Mapa de Acordes · Explora el universo de la armonía</footer>
@@ -944,7 +1001,7 @@ function sequenceEntry(chord,duration=4,unit='beats'){
   const rest=chord.trim()==='-'||chord.trim().toLowerCase()==='silencio';
   if(!rest&&!parseChord(chord))throw new Error('No reconozco el acorde «'+chord+'».');
   const n=Number(duration),min=unit==='seconds'?.1:.25,max=unit==='seconds'?120:64;
-  if(!['beats','seconds'].includes(unit)||!Number.isFinite(n)||n<min||n>max)throw new Error('Duración inválida para «'+chord+'»: usa '+min+' a '+max+' '+(unit==='seconds'?'segundos':'tiempos')+'.');
+  if(!['beats','seconds','measures'].includes(unit)||!Number.isFinite(n)||n<min||n>max)throw new Error('Duración inválida para «'+chord+'»: usa '+min+' a '+max+' '+(unit==='seconds'?'segundos':'tiempos')+'.');
   return {chord:chord.trim(),duration:n,unit,rest};
 }
 function parseSequence(text){
@@ -968,7 +1025,8 @@ function sequenceMidi(chord){
   const upper=pcs.map(pc=>48+pc).sort((a,b)=>a-b);
   return [bass,...upper];
 }
-function sequenceSeconds(entry,bpm){return entry.unit==='seconds'?entry.duration:entry.duration*60/bpm;}
+function meterPulses(meter){return meter==='6/8'?2:meter==='3/4'?3:4;}
+function sequenceSeconds(entry,bpm,meter=$('seqMeter').value){return entry.unit==='seconds'?entry.duration:entry.duration*(entry.unit==='measures'?meterPulses(meter):1)*60/bpm;}
 
 /* ---------- Eventos ---------- */
 const input=$('q'),status=$('status'),defaultStatus=status.textContent;
@@ -1006,16 +1064,17 @@ for(const [id,count] of [['pianoOct1',1],['pianoOct2',2]]){
 
 /* ---------- Reproductor de progresiones ---------- */
 let seqDraft=[{chord:'Cmaj7',duration:4,unit:'beats'},{chord:'Am7',duration:4,unit:'beats'},{chord:'Dm7',duration:4,unit:'beats'},{chord:'G7',duration:4,unit:'beats'}];
-try{const saved=JSON.parse(store.get('mapa-sequence'));if(saved&&Array.isArray(saved.rows)&&saved.rows.length&&saved.rows.length<=128){seqDraft=saved.rows.map(r=>sequenceEntry(r.chord,r.duration,r.unit));if(Number.isInteger(saved.bpm)&&saved.bpm>=20&&saved.bpm<=300)$('seqBpm').value=saved.bpm;$('seqLoop').checked=!!saved.loop;if(saved.sound){for(const [name,id] of [['piano','mixPiano'],['harp','mixHarp'],['pad','mixPad']]){const v=Number(saved.sound[name]);if(Number.isFinite(v))$(id).value=Math.round(Math.max(0,Math.min(1,v))*100);}if(['up','down','updown','off'].includes(saved.sound.pattern))$('arpPattern').value=saved.sound.pattern;if([1,2,4].includes(saved.sound.rate))$('arpRate').value=saved.sound.rate;}}}catch(e){}
+try{const saved=JSON.parse(store.get('mapa-sequence'));if(saved&&['3/4','4/4','6/8'].includes(saved.meter))$('seqMeter').value=saved.meter;if(saved&&Array.isArray(saved.rows)&&saved.rows.length&&saved.rows.length<=128){seqDraft=saved.rows.map(r=>sequenceEntry(r.chord,r.duration,r.unit));if(Number.isInteger(saved.bpm)&&saved.bpm>=20&&saved.bpm<=300)$('seqBpm').value=saved.bpm;$('seqLoop').checked=!!saved.loop;if(saved.sound){for(const [name,id] of [['piano','mixPiano'],['harp','mixHarp'],['pad','mixPad']]){const v=Number(saved.sound[name]);if(Number.isFinite(v))$(id).value=Math.round(Math.max(0,Math.min(1,v))*100);}if(['up','down','updown','off'].includes(saved.sound.pattern))$('arpPattern').value=saved.sound.pattern;if([1,2,4].includes(saved.sound.rate))$('arpRate').value=saved.sound.rate;}}}catch(e){}
 let seqRun=null,seqTicket=0;
 function seqMessage(message,error=false){$('seqStatus').textContent=message;$('seqStatus').classList.toggle('error',error);}
-function saveSequence(){store.set('mapa-sequence',JSON.stringify({rows:seqDraft,bpm:Number($('seqBpm').value),loop:$('seqLoop').checked,sound:soundSettings()}));}
+function saveSequence(){store.set('mapa-sequence',JSON.stringify({rows:seqDraft,bpm:Number($('seqBpm').value),meter:$('seqMeter').value,loop:$('seqLoop').checked,sound:soundSettings()}));}
 function renderSequence(){
-  $('seqRows').innerHTML=seqDraft.map((r,i)=>`<li class="seq-row" data-row="${i}"><span class="seq-number">${i+1}</span><label>Acorde<input data-field="chord" aria-label="Acorde ${i+1}" spellcheck="false" autocomplete="off" value="${esc(r.chord)}"></label><label>Duración<input data-field="duration" aria-label="Duración ${i+1}" type="number" min="${r.unit==='seconds'?.1:.25}" max="${r.unit==='seconds'?120:64}" step="any" value="${esc(r.duration)}"></label><label>Unidad<select data-field="unit" aria-label="Unidad ${i+1}"><option value="beats" ${r.unit==='beats'?'selected':''}>Tiempos</option><option value="seconds" ${r.unit==='seconds'?'selected':''}>Segundos</option></select></label><button type="button" class="lab-btn remove" data-remove="${i}" aria-label="Eliminar acorde ${i+1}">×</button></li>`).join('');
+  $('seqRows').innerHTML=seqDraft.map((r,i)=>`<li class="seq-row" data-row="${i}"><span class="seq-number">${i+1}</span><label>Acorde<input data-field="chord" aria-label="Acorde ${i+1}" spellcheck="false" autocomplete="off" value="${esc(r.chord)}"></label><label>Duración<input data-field="duration" aria-label="Duración ${i+1}" type="number" min="${r.unit==='seconds'?.1:.25}" max="${r.unit==='seconds'?120:64}" step="any" value="${esc(r.duration)}"></label><label>Unidad<select data-field="unit" aria-label="Unidad ${i+1}"><option value="beats" ${r.unit==='beats'?'selected':''}>Pulsos</option><option value="measures" ${r.unit==='measures'?'selected':''}>Compases</option><option value="seconds" ${r.unit==='seconds'?'selected':''}>Segundos</option></select></label><button type="button" class="lab-btn remove" data-remove="${i}" aria-label="Eliminar acorde ${i+1}">×</button></li>`).join('');
   sequenceSummary();
 }
 function sequenceSummary(){
   try{const bpm=Number($('seqBpm').value);if(bpm<20||bpm>300)throw Error();const total=seqDraft.reduce((a,r)=>a+sequenceSeconds(sequenceEntry(r.chord,r.duration,r.unit),bpm),0);$('seqSummary').textContent=seqDraft.length+' pasos · '+total.toFixed(1)+' s';}catch(e){$('seqSummary').textContent='Revisa la secuencia';}
+  if(typeof coachReady!=='undefined'&&coachReady)renderCoach();
 }
 function stopSequence(announce=true){
   seqTicket++;
@@ -1027,7 +1086,7 @@ function stopSequence(announce=true){
 function scheduleSequenceChord(run,notes,time,duration){
   if(!notes.length)return;const n=Math.sqrt(notes.length);
   notes.forEach(m=>{playTone(run,m,time,Math.min(duration,3.5),'piano',.14/n);playTone(run,m,time,duration,'pad',.04/n);});
-  const settings=soundSettings();run.arps.push(...planArpeggio(notes,time,duration,run.bpm,settings.pattern,settings.rate));
+  const settings=soundSettings();run.arps.push(...planArpeggio(notes,time,duration,run.bpm*($('seqMeter').value==='6/8'?1.5:1),settings.pattern,settings.rate));
 }
 async function startSequence(){
   stopSequence(false);
@@ -1237,6 +1296,75 @@ $('themeToggle').addEventListener('click',()=>{
  document.documentElement.dataset.theme=next;store.set('mapa-theme',next);updateThemeButton();
 });
 updateThemeButton();
+
+var coachReady=false;
+const COACH_MODES=[
+ ['major','Mayor · jónico',[0,2,4,5,7,9,11],'Mayor, con séptimo grado a un semitono de la tónica.'],
+ ['minor','Menor natural · eólico',[0,2,3,5,7,8,10],'Menor natural; su dominante diatónica es menor.'],
+ ['dorian','Dórico',[0,2,3,5,7,9,10],'Menor con sexta mayor.'],
+ ['phrygian','Frigio',[0,1,3,5,7,8,10],'Menor con segunda menor.'],
+ ['lydian','Lidio',[0,2,4,6,7,9,11],'Mayor con cuarta aumentada.'],
+ ['mixolydian','Mixolidio',[0,2,4,5,7,9,10],'Mayor con séptima menor.'],
+ ['locrian','Locrio',[0,1,3,5,6,8,10],'Tercera menor y quinta disminuida.'],
+ ['harmonic','Menor armónica',[0,2,3,5,7,8,11],'Menor con séptimo grado elevado; admite dominante mayor.']
+];
+function coachChordPcs(chord){
+ const p=parseChord(chord);if(!p)return [];
+ const pcs=QUAL[p.q].tones.map(tok=>{const t=tokParse(tok);return(p.root.pc+DEG_SEMI[t.deg]+t.acc)%12;});
+ if(p.bass)pcs.push(p.bass.pc);return [...new Set(pcs)];
+}
+function coachCandidates(rows){
+ const sounding=rows.filter(r=>parseChord(r.chord));
+ if(!sounding.length)return [];
+ const all=[...new Set(sounding.flatMap(r=>coachChordPcs(r.chord)))];
+ const last=parseChord(sounding[sounding.length-1].chord).root.pc;
+ const first=parseChord(sounding[0].chord).root.pc;
+ const result=[];
+ for(let root=0;root<12;root++)for(const mode of COACH_MODES){
+ const scale=mode[2].map(n=>(root+n)%12),fits=all.every(pc=>scale.includes(pc));
+ if(fits)result.push({root,mode,score:(root===last?3:0)+(root===first?2:0)+(mode[0]==='major'||mode[0]==='minor'?1:0)});
+ }
+ return result.sort((a,b)=>b.score-a.score);
+}
+function renderCoach(){
+ const step=$('coachStep'),old=Number(step.value)||0;
+ step.innerHTML=seqDraft.map((r,i)=>'<option value="'+i+'">'+(i+1)+'. '+esc(r.chord)+'</option>').join('');
+ step.value=String(Math.min(old,Math.max(0,seqDraft.length-1)));
+ const row=seqDraft[Number(step.value)],parsed=row&&parseChord(row.chord);
+ const candidates=coachCandidates(seqDraft),context=$('coachContext').value;
+ let chosen=null;
+ if(context){const [root,id]=context.split(':');chosen={root:Number(root),mode:COACH_MODES.find(m=>m[0]===id)};}
+ else chosen=candidates[0];
+ if(!chosen||!chosen.mode){$('coachReading').textContent=seqDraft.length?'No hay una escala del catálogo que contenga todas las notas. Elige un contexto para explorar cromatismos o cambios de tonalidad.':'Añade acordes para explorar su armonía.';$('coachSuggestions').innerHTML='';return;}
+ const root=chosen.root,mode=chosen.mode,scale=mode[2].map(n=>(root+n)%12);
+ const title=pitchLabel(root)+' '+mode[1].toLowerCase();
+ $('coachReading').textContent=(context?'Contexto elegido: ':'Lectura posible: ')+title+'. '+mode[3]+(!context&&candidates.length>1?' Hay '+candidates.length+' lecturas compatibles; las notas por sí solas no confirman una tonalidad.':'');
+ if(!parsed){$('coachSuggestions').innerHTML='<p>Selecciona un acorde válido para ver sugerencias.</p>';return;}
+ const pcs=coachChordPcs(row.chord),outside=pcs.filter(pc=>!scale.includes(pc));
+ const minor=mode[2].includes(3),tonicKey=mode[0]==='locrian'?'dim':minor?'m':'maj';
+ const home=pitchNames[root]+QUAL[tonicKey].sym;
+ const dominant=pitchNames[(root+7)%12]+(mode[0]==='major'||mode[0]==='harmonic'?'7':minor?'m':'');
+ const degree=(parsed.root.pc-root+12)%12;
+ const role=degree===0?'Acorde sobre el centro elegido.':degree===7?'Acorde sobre el quinto grado; su función depende de sus notas y del contexto.':'Explora cómo conecta con el centro elegido.';
+ const colors=scale.filter(pc=>!pcs.includes(pc)&&[1,2,5,6,9].includes((pc-parsed.root.pc+12)%12)).slice(0,3);
+ $('coachSuggestions').innerHTML='<div class="coach-card"><h4>Resolver</h4><p>'+role+' Prueba llegar a <b>'+home+'</b>.</p><button type="button" data-coach-preview="'+esc(home)+'">▶ Escuchar '+home+'</button><button type="button" data-coach-add="'+esc(home)+'">+ Añadir</button></div><div class="coach-card"><h4>Crear dirección</h4><p>Prueba <b>'+dominant+' → '+home+'</b>.'+(mode[0]!=='major'&&mode[0]!=='harmonic'?' Es una alternativa modal; no implica una cadencia dominante clásica.':' El dominante puede preparar la llegada al centro.')+'</p><button type="button" data-coach-preview="'+esc(dominant)+'">▶ Escuchar '+dominant+'</button><button type="button" data-coach-add="'+esc(dominant)+'">+ Añadir</button></div><div class="coach-card"><h4>Explorar tensiones</h4><p>'+(colors.length?'Añade una de estas notas al acorde seleccionado. Su fricción depende del registro.':'Este acorde ya contiene muchos colores del contexto elegido.')+'</p>'+colors.map(pc=>'<button type="button" data-coach-note="'+pc+'">▶ + '+pitchLabel(pc)+'</button>').join('')+(outside.length?'<p class="coach-outside">Fuera de la escala elegida: '+outside.map(pitchLabel).join(', ')+'. Pueden ser cromatismos o préstamos; no se asigna función automática.</p>':'')+'</div>';
+}
+$('coachContext').innerHTML='<option value="">Explorar posibilidades</option>'+pitchNames.map((n,root)=>'<optgroup label="'+n+'">'+COACH_MODES.map(mode=>'<option value="'+root+':'+mode[0]+'">'+n+' '+mode[1]+'</option>').join('')+'</optgroup>').join('');
+$('coachContext').addEventListener('change',renderCoach);
+$('coachStep').addEventListener('change',renderCoach);
+$('coachSuggestions').addEventListener('click',e=>{
+ const add=e.target.closest('[data-coach-add]'),preview=e.target.closest('[data-coach-preview]'),note=e.target.closest('[data-coach-note]');
+ if(add){appendSequence(add.dataset.coachAdd);renderCoach();}
+ if(preview)playMidi(sequenceMidi(preview.dataset.coachPreview),0,true);
+ if(note){const row=seqDraft[Number($('coachStep').value)];if(row&&parseChord(row.chord))playMidi([...sequenceMidi(row.chord),60+Number(note.dataset.coachNote)],0,true);}
+});
+function refreshMeter(){
+ const compound=$('seqMeter').value==='6/8';
+ $('seqMeterHint').textContent=compound?'Negra con puntillo = BPM · 2 pulsos por compás':'Negra = BPM · '+meterPulses($('seqMeter').value)+' pulsos por compás';
+}
+$('seqMeter').addEventListener('change',()=>{stopSequence(false);refreshMeter();sequenceSummary();saveSequence();seqMessage('Compás actualizado. Pulsa reproducir.');});
+coachReady=true;refreshMeter();renderCoach();
+
 const params=new URLSearchParams(location.search);
 const requested=params.get('chord');
 const initialChord=requested&&requested.length<60&&parseChord(requested)?requested:'Cmaj7';
