@@ -1,0 +1,23 @@
+name: Validar Mapa de Acordes
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [desarrollo]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v4
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Ejecutar comprobaciones SEO y JavaScript
+        run: node scripts/check-site.mjs
