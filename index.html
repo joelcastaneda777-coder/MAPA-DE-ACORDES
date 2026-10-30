@@ -582,6 +582,42 @@ function playMidi(list,gap,simultaneous=false){
   const timer=setInterval(()=>{flushArpeggio(bus,c.currentTime);if(c.currentTime>t+3){clearInterval(timer);disposeSoundBus(bus);}},25);
 }
 
+/* Guitarra acústica sintetizada: cuerda pulsada Karplus–Strong y cuerpo. */
+function guitarStringBuffer(c,midi){
+  const rate=c.sampleRate,freq=440*Math.pow(2,(midi-69)/12);
+  const period=rate/freq,delay=Math.max(2,Math.floor(period-.5)),fraction=period-.5-delay;
+  const buffer=c.createBuffer(1,Math.ceil(rate*3.8),rate),out=buffer.getChannelData(0),ring=new Float32Array(delay+1);
+  let seed=(midi+1)*7919;
+  for(let i=0;i<ring.length;i++){seed=(seed*1664525+1013904223)>>>0;ring[i]=(seed/4294967296*2-1)*.7;}
+  let cursor=0,last=0;
+  const damping=.9975;
+  for(let i=0;i<out.length;i++){
+    const a=ring[cursor],b=ring[(cursor+1)%ring.length];
+    const sample=a*(1-fraction)+b*fraction;
+    const next=(sample+last)*.5*damping;
+    ring[cursor]=next;last=sample;cursor=(cursor+1)%ring.length;
+    out[i]=sample*Math.min(1,i/(rate*.002))*Math.min(1,(out.length-i)/(rate*.08));
+  }
+  return buffer;
+}
+function playGuitar(list,simultaneous=false){
+  const c=ctx();if(!c||!list.length)return;
+  const master=c.createGain(),body=c.createBiquadFilter(),air=c.createBiquadFilter(),cut=c.createBiquadFilter();
+  body.type='peaking';body.frequency.value=190;body.Q.value=.8;body.gain.value=4;
+  air.type='lowpass';air.frequency.value=5200;air.Q.value=.6;
+  cut.type='highpass';cut.frequency.value=65;
+  master.gain.value=.65/Math.sqrt(list.length);master.connect(body);body.connect(air);air.connect(cut);cut.connect(c.destination);
+  const sources=[],start=c.currentTime+.04;
+  list.forEach((m,i)=>{
+    const source=c.createBufferSource(),volume=c.createGain(),time=start+(simultaneous?0:i*.026);
+    source.buffer=guitarStringBuffer(c,m);
+    volume.gain.setValueAtTime(.8,time);volume.gain.exponentialRampToValueAtTime(.001,time+3.7);
+    source.connect(volume);volume.connect(master);source.start(time);sources.push(source);
+    source.onended=()=>{source.disconnect();volume.disconnect();};
+  });
+  setTimeout(()=>{master.disconnect();body.disconnect();air.disconnect();cut.disconnect();},4500);
+}
+
 /* ---------- Render ---------- */
 const $=id=>document.getElementById(id);
 function render(){renderTop();renderControls();if(state.mode==='piano')renderPiano();else renderGuitar();renderExtras();}
@@ -806,7 +842,7 @@ $('voicings').addEventListener('click',e=>{const c=e.target.closest('.vcard');if
 function playCurrent(simultaneous=false){
   const together=simultaneous===true;
   if(state.mode==='piano'){playMidi(pianoVoicing().notes.map(v=>48+v.pos),0,together);}
-  else{const {list}=guitarVoicings(),v=list[state.vIdx];if(v)playMidi(v.frets.map((f,i)=>f==='x'?null:TUNING[i]+f).filter(x=>x!==null),0,together);}
+  else{const {list}=guitarVoicings(),v=list[state.vIdx];if(v)playGuitar(v.frets.map((f,i)=>f==='x'?null:TUNING[i]+f).filter(x=>x!==null),together);}
 }
 $('play').addEventListener('click',()=>playCurrent());
 $('playFull').addEventListener('click',()=>playCurrent(true));
