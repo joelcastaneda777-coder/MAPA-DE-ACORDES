@@ -503,7 +503,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 .seq-colors>div{display:flex;flex-wrap:wrap;gap:6px}
 .seq-colors button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:1px solid var(--line);border-radius:10px;background:rgba(120,180,190,.1);color:var(--ink);padding:7px 9px;font-size:11px;cursor:pointer}
 .seq-colors button b{font-size:11px}.seq-colors button:hover{background:rgba(0,205,171,.2);border-color:#00cdaa}
-</style><style>.seq-colors button[aria-pressed="true"]{background:rgba(0,205,171,.25);border-color:#00cdaa;box-shadow:inset 0 0 0 1px rgba(0,205,171,.3)}.seq-colors button{min-width:42px;min-height:36px;align-items:center;justify-content:center}</style></head>
+</style><style>.seq-colors button[aria-pressed="true"]{background:rgba(0,205,171,.25);border-color:#00cdaa;box-shadow:inset 0 0 0 1px rgba(0,205,171,.3)}.seq-colors button{min-width:42px;min-height:36px;align-items:center;justify-content:center}</style><style>.sequence-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}.sequence-tools{gap:12px;flex-wrap:wrap}#seqClear{background:rgba(128,180,190,.07)}#seqUndoClear{border-color:#00cdaa}</style></head>
 <body>
 <div class="space-shell">
 <header class="universe-nav"><a class="brand" href="#explorar"><span class="brand-mark" aria-hidden="true"></span>Mapa de Acordes</a><nav aria-label="Navegación principal"><a href="#acorde">Explorador</a><a href="#laboratorio">Progresiones</a><a href="#universo">Universo</a><span>Escalas <small>PRONTO</small></span><span>Modos <small>PRONTO</small></span><a href="#teoria">Herramientas</a></nav><button type="button" id="themeToggle" class="btn theme-toggle" role="switch" aria-checked="false" aria-label="Modo claro"><span class="theme-thumb" aria-hidden="true">☾</span></button><div class="seg" role="group" aria-label="Sistema de notación"><button id="notationUS" aria-pressed="true" type="button">Americano</button><button id="notationLatin" aria-pressed="false" type="button">Latino</button></div></header><main class="workspace" id="main-content">
@@ -596,7 +596,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
  <div class="inner">
   <div class="lab-head"><div><div class="eyebrow">Laboratorio armónico</div><h2 id="labTitle">Tu progresión</h2></div><span class="seq-summary" id="seqSummary"></span></div>
   <p>Prueba tus rearmonizaciones. Elige los acordes y cuánto dura cada uno; un tiempo equivale a una negra al tempo indicado.</p>
-  <div class="sequence-main"><div class="sequence-tools"><h3>Acordes</h3><button type="button" class="lab-btn" id="openSequencePaste">Pegar secuencia</button></div><dialog id="sequencePasteDialog" aria-labelledby="pasteDialogTitle"><div class="paste-dialog-head"><h3 id="pasteDialogTitle">Pega tu progresión</h3><button type="button" class="lab-btn" id="closeSequencePaste" aria-label="Cerrar">×</button></div><div class="seq-import"><label for="seqQuick">Secuencia rápida<textarea id="seqQuick" rows="2" placeholder="Cmaj7 Am7 Dm7 G7 · o Do Re menor Sol7 Do" autocomplete="off" spellcheck="false" aria-describedby="seqHelp"></textarea></label><button class="lab-btn" id="seqLoad" type="button">Cargar secuencia</button></div>
+  <div class="sequence-main"><div class="sequence-tools"><h3>Acordes</h3><div class="sequence-actions"><button type="button" class="lab-btn" id="seqUndoClear" hidden>Deshacer</button><button type="button" class="lab-btn" id="seqClear">Empezar de cero</button><button type="button" class="lab-btn" id="openSequencePaste">Pegar secuencia</button></div></div><dialog id="sequencePasteDialog" aria-labelledby="pasteDialogTitle"><div class="paste-dialog-head"><h3 id="pasteDialogTitle">Pega tu progresión</h3><button type="button" class="lab-btn" id="closeSequencePaste" aria-label="Cerrar">×</button></div><div class="seq-import"><label for="seqQuick">Secuencia rápida<textarea id="seqQuick" rows="2" placeholder="Cmaj7 Am7 Dm7 G7 · o Do Re menor Sol7 Do" autocomplete="off" spellcheck="false" aria-describedby="seqHelp"></textarea></label><button class="lab-btn" id="seqLoad" type="button">Cargar secuencia</button></div>
   <label class="paste-duration">Cada acorde dura<select id="seqPasteDuration"><option value="1">1 compás</option><option value="2">2 compases</option><option value=".5">½ compás</option></select></label><p class="seq-help" id="seqHelp">Separa los acordes con espacios: C Am F G, o Do La menor Fa Sol. Ajusta cada duración después. Avanzado: C:4 = 4 pulsos; C:2s = 2 segundos. «-» añade un silencio.</p><div id="seqPastePreview" class="paste-preview" aria-live="polite"></div>
   </dialog><div class="seq-rhythm"><label>Compás<select id="seqMeter"><option value="4/4">4/4</option><option value="3/4">3/4</option><option value="6/8">6/8</option></select></label><span id="seqMeterHint">Negra = BPM · 4 pulsos por compás</span></div><ol class="seq-list" id="seqRows" aria-label="Acordes de la progresión"></ol></div><section class="seq-sound" aria-label="Mezcla e interpretación"><div class="sound-direct-head"><h3>Tu sonido</h3><span>Piano · arpa · pad</span></div><fieldset class="sound-panel"><legend>Sonido · piano dulce, arpa y pad</legend>
  <label>Piano <input id="mixPiano" type="range" min="0" max="100" value="80"><output id="mixPianoValue">80%</output></label>
@@ -1181,7 +1181,7 @@ for(const [id,count] of [['pianoOct1',1],['pianoOct2',2]]){
 
 /* ---------- Reproductor de progresiones ---------- */
 let seqDraft=[{chord:'Cmaj7',duration:4,unit:'beats'},{chord:'Am7',duration:4,unit:'beats'},{chord:'Dm7',duration:4,unit:'beats'},{chord:'G7',duration:4,unit:'beats'}];
-try{const saved=JSON.parse(store.get('mapa-sequence'));if(saved&&['3/4','4/4','6/8'].includes(saved.meter))$('seqMeter').value=saved.meter;if(saved&&Array.isArray(saved.rows)&&saved.rows.length&&saved.rows.length<=128){seqDraft=saved.rows.map(r=>syncColorRow({...sequenceEntry(r.chord,r.duration,r.unit),...(parseChord(r.colorBase||'')?{colorBase:r.colorBase,colorNotes:r.colorNotes}: {})}));if(Number.isInteger(saved.bpm)&&saved.bpm>=20&&saved.bpm<=300)$('seqBpm').value=saved.bpm;$('seqLoop').checked=!!saved.loop;if(saved.sound){for(const [name,id] of [['piano','mixPiano'],['harp','mixHarp'],['pad','mixPad']]){const v=Number(saved.sound[name]);if(Number.isFinite(v))$(id).value=Math.round(Math.max(0,Math.min(1,v))*100);}if(['up','down','updown','off'].includes(saved.sound.pattern))$('arpPattern').value=saved.sound.pattern;if([1,2,4].includes(saved.sound.rate))$('arpRate').value=saved.sound.rate;}}}catch(e){}
+try{const saved=JSON.parse(store.get('mapa-sequence'));if(saved&&['3/4','4/4','6/8'].includes(saved.meter))$('seqMeter').value=saved.meter;if(saved&&Array.isArray(saved.rows)&&saved.rows.length<=128){seqDraft=saved.rows.map(r=>syncColorRow({...sequenceEntry(r.chord,r.duration,r.unit),...(parseChord(r.colorBase||'')?{colorBase:r.colorBase,colorNotes:r.colorNotes}: {})}));if(Number.isInteger(saved.bpm)&&saved.bpm>=20&&saved.bpm<=300)$('seqBpm').value=saved.bpm;$('seqLoop').checked=!!saved.loop;if(saved.sound){for(const [name,id] of [['piano','mixPiano'],['harp','mixHarp'],['pad','mixPad']]){const v=Number(saved.sound[name]);if(Number.isFinite(v))$(id).value=Math.round(Math.max(0,Math.min(1,v))*100);}if(['up','down','updown','off'].includes(saved.sound.pattern))$('arpPattern').value=saved.sound.pattern;if([1,2,4].includes(saved.sound.rate))$('arpRate').value=saved.sound.rate;}}}catch(e){}
 let seqRun=null,seqTicket=0;
 function seqMessage(message,error=false){$('seqStatus').textContent=message;$('seqStatus').classList.toggle('error',error);}
 function saveSequence(){store.set('mapa-sequence',JSON.stringify({rows:seqDraft,bpm:Number($('seqBpm').value),meter:$('seqMeter').value,loop:$('seqLoop').checked,sound:soundSettings()}));}
@@ -1272,6 +1272,19 @@ function appendSequence(chord){
    seqMessage('Acorde añadido.');
  }
 }
+let sequenceBeforeClear=null;
+$('seqClear').addEventListener('click',()=>{
+ if(!seqDraft.length){seqMessage('La secuencia ya está vacía. Añade un acorde para comenzar.');return;}
+ sequenceBeforeClear=JSON.parse(JSON.stringify(seqDraft));
+ stopSequence(false);seqDraft=[];$('seqQuick').value='';
+ renderSequence();saveSequence();$('seqUndoClear').hidden=false;
+ seqMessage('Secuencia vacía. Añade acordes desde la brújula o pega una progresión. Puedes deshacer el borrado.');
+});
+$('seqUndoClear').addEventListener('click',()=>{
+ if(!sequenceBeforeClear)return;
+ stopSequence(false);seqDraft=sequenceBeforeClear;sequenceBeforeClear=null;
+ renderSequence();saveSequence();$('seqUndoClear').hidden=true;seqMessage('Progresión recuperada.');
+});
 $('seqAdd').addEventListener('click',()=>appendSequence('C'));
 $('seqCurrent').addEventListener('click',()=>appendSequence(symbol()));
 $('seqBpm').addEventListener('input',()=>{stopSequence(false);sequenceSummary();saveSequence();seqMessage('Tempo actualizado. Pulsa reproducir.');});
