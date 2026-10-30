@@ -194,9 +194,18 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 .seq-footer{justify-content:space-between}.seq-state{min-height:24px;font-size:14px;color:var(--muted);margin:16px 0 0}.seq-state.error{color:var(--c-root)}
 .seq-summary{font:13px var(--font-mono);color:var(--muted)}
 @media(max-width:540px){.seq-row{grid-template-columns:20px minmax(70px,1fr) 68px 86px 32px;gap:6px;padding:9px}.lab .seq-row input[type=number]{width:100%}.seq-row input,.seq-row select{padding:8px 5px;font-size:14px}.seq-row .remove{padding:4px}.transport{gap:10px}.lab h2{font-size:25px}}
+/* Accesibilidad: contraste y tamaño de controles para interacción táctil. */
+:root{--muted:#495262;--hinge-muted:#BBC4D2}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--muted:#B1BAC8;--hinge-muted:#B8C3D3}}
+:root[data-theme="dark"]{--muted:#B1BAC8;--hinge-muted:#B8C3D3}
+.chips button,.seg button,.hbtn,.lab .lab-btn{min-height:44px}
+.chips{gap:8px}
+.btn{min-height:44px}
+@media(max-width:540px){.seq-row .remove{min-width:36px;min-height:44px}}
 </style>
 </head>
 <body>
+<main id="main-content">
 <div class="app">
   <section class="band top" aria-label="Teoría del acorde">
     <div class="inner">
@@ -296,6 +305,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
   <p class="seq-state" id="seqStatus" role="status" aria-live="polite">Lista para escuchar. Piano y arpa sintetizados con pad; la progresión usa su propio registro de notas.</p>
  </div>
 </section>
+</main>
 
 <script>
 (function(){
