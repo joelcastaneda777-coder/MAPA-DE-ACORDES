@@ -2,6 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<script>
+(function(){try{const saved=localStorage.getItem('mapa-theme');document.documentElement.dataset.theme=saved==='light'||saved==='dark'?saved:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}catch(e){document.documentElement.dataset.theme='dark';}})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Busca cualquier acorde y míralo en piano y guitarra, con inversiones, disposiciones y una explicación de cómo se forma.">
 <style>
@@ -235,10 +238,47 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 #guitarPanel #fretboard{width:100%!important;min-width:0!important;max-width:100%!important;height:220px;box-sizing:border-box}
 #guitarPanel .voicings{min-width:0;max-width:100%;box-sizing:border-box}
 @media(max-width:650px){#guitarPanel #fretboard{height:190px}.bottom .ihead>div:first-child{flex-wrap:wrap}}
+</style><style>
+.theme-toggle{font-size:12px;white-space:nowrap;min-height:38px;padding:8px 13px}
+:root[data-theme="dark"]{color-scheme:dark}
+:root[data-theme="light"]{color-scheme:light;--bg:#eef5f4;--surface:#ffffff;--ink:#153a45;--muted:#476771;--line:#b6cfd2;--hinge:#e6f0f0;--hinge-ink:#153a45;--hinge-muted:#476771;--hinge-field:#fff;--hinge-line:#b6cfd2;--on-tone:#102f39}
+:root[data-theme="light"] body{background:#eef5f4;color:#153a45}
+:root[data-theme="light"] .workspace{background:transparent}
+:root[data-theme="light"] .universe-nav{background:linear-gradient(115deg,#f047700c,transparent 35%,#06d7a015),#faffffdf;border-color:#a7c5cc;box-shadow:inset 0 1px #fff,0 8px 25px #163e4910}
+:root[data-theme="light"] .brand,:root[data-theme="light"] .universe-nav nav a,:root[data-theme="light"] .universe-nav nav>span{color:#173e4b}
+:root[data-theme="light"] .universe-nav nav a:hover{background:#d9e9e9}
+:root[data-theme="light"] .top,:root[data-theme="light"] .bottom,:root[data-theme="light"] .theory-card,:root[data-theme="light"] .inversions-card,:root[data-theme="light"] .variations-card,:root[data-theme="light"] .universe-tool,:root[data-theme="light"] .lab,:root[data-theme="light"] .related-nav{background:#faffff;border-color:#bdd5d8;box-shadow:0 8px 28px #153a4510;color:#173e4b}
+:root[data-theme="light"] .mission-hero h2 em{color:#42747e}
+:root[data-theme="light"] .mission-hero p,:root[data-theme="light"] .mission-hero .eyebrow,:root[data-theme="light"] .top .eyebrow,:root[data-theme="light"] .fullname,:root[data-theme="light"] .use,:root[data-theme="light"] .legend,:root[data-theme="light"] .steps .res,:root[data-theme="light"] .lab p,:root[data-theme="light"] #pianoNote,:root[data-theme="light"] .universe-tool p,:root[data-theme="light"] .tone small,:root[data-theme="light"] .inversion-choice small{color:#42646e!important}
+:root[data-theme="light"] .tone,:root[data-theme="light"] .steps li{color:#173e4b;border-color:#d4e3e5}
+:root[data-theme="light"] .steps .res b{color:#173e4b}
+:root[data-theme="light"] .seg,:root[data-theme="light"] .piano-octave-buttons,:root[data-theme="light"] .hinge .controls{background:linear-gradient(120deg,#fff9,#dcefedb0);border-color:#b8d0d5}
+:root[data-theme="light"] .seg button,:root[data-theme="light"] .piano-octave-buttons button{color:#315d69}
+:root[data-theme="light"] .seg button[aria-pressed=true],:root[data-theme="light"] .piano-octave-buttons button[aria-pressed=true]{background:linear-gradient(135deg,#275b6d,#123f50);color:#fff}
+:root[data-theme="light"] .search input,:root[data-theme="light"] .lab input,:root[data-theme="light"] .lab textarea,:root[data-theme="light"] .lab select,:root[data-theme="light"] .bass-label select{background:#f5fbfb;color:#153a45;border-color:#aecbd0}
+:root[data-theme="light"] .search input::placeholder,:root[data-theme="light"] .status{color:#4e6f79}
+:root[data-theme="light"] .btn,:root[data-theme="light"] .hbtn,:root[data-theme="light"] .lab .lab-btn,:root[data-theme="light"] .chips button{background:linear-gradient(135deg,#fff,#e1efef);color:#174553;border-color:#b4cfd4}
+:root[data-theme="light"] .actions .btn{background:linear-gradient(135deg,#fff0bf,#ffd167);color:#173e4b}
+:root[data-theme="light"] .invnote,:root[data-theme="light"] .sound-panel,:root[data-theme="light"] .lab .seq-row,:root[data-theme="light"] .inversion-choice[aria-pressed=true]{background:#e7f2f2;color:#173e4b;border-color:#bdd5d8}
+:root[data-theme="light"] .inversion-choice{color:#173e4b}
+:root[data-theme="light"] .vcard{background:#edf5f5;color:#173e4b;border-color:#b7ced3}
+:root[data-theme="light"] .vcard small,:root[data-theme="light"] .toggle,:root[data-theme="light"] .piano-hint{color:#406773}
+:root[data-theme="light"] .vcard[aria-pressed=true]{border-color:#214f60;box-shadow:0 0 0 1px #214f60}
+:root[data-theme="light"] .gtools .tab{background:#e2efef;color:#214f60}
+:root[data-theme="light"] .planet-choice,:root[data-theme="light"] .match-card{background:#edf5f5;color:#174553;border-color:#b7d0d5}
+:root[data-theme="light"] .planet-choice[aria-pressed=true]{background:linear-gradient(135deg,#fff1c4,#ffd167)}
+:root[data-theme="light"] .match-card b{color:#163f4c}
+:root[data-theme="light"] .match-card small{color:#376d7e}
+:root[data-theme="light"] .mode-tags span{border-color:#b7d0d5}
+:root[data-theme="light"] .solar-stage{background:radial-gradient(ellipse,#d4e9ed,transparent 70%)}
+:root[data-theme="light"] .use a{color:#18627a}
+:root[data-theme="light"] .hero-orbit ellipse,:root[data-theme="light"] #solarSystem ellipse{stroke:#497b87;stroke-opacity:.4}
+:root[data-theme="light"] .chord-orbit{border-color:#63959d55}
+@media(max-width:650px){.universe-nav .theme-toggle{font-size:11px;padding:7px 9px;min-height:34px}.universe-nav{gap:8px}.universe-nav .seg{margin-left:0}}
 </style></head>
 <body>
 <div class="space-shell">
-<header class="universe-nav"><a class="brand" href="#explorar"><span class="brand-mark" aria-hidden="true"></span>Mapa de Acordes</a><nav aria-label="Navegación principal"><a href="#acorde">Explorador</a><a href="#laboratorio">Progresiones</a><a href="#universo">Universo</a><span>Escalas <small>PRONTO</small></span><span>Modos <small>PRONTO</small></span><a href="#teoria">Herramientas</a></nav><div class="seg" role="group" aria-label="Sistema de notación"><button id="notationUS" aria-pressed="true" type="button">Americano</button><button id="notationLatin" aria-pressed="false" type="button">Latino</button></div></header><main class="workspace" id="main-content">
+<header class="universe-nav"><a class="brand" href="#explorar"><span class="brand-mark" aria-hidden="true"></span>Mapa de Acordes</a><nav aria-label="Navegación principal"><a href="#acorde">Explorador</a><a href="#laboratorio">Progresiones</a><a href="#universo">Universo</a><span>Escalas <small>PRONTO</small></span><span>Modos <small>PRONTO</small></span><a href="#teoria">Herramientas</a></nav><button type="button" id="themeToggle" class="btn theme-toggle" aria-label="Cambiar tema">☀ Claro</button><div class="seg" role="group" aria-label="Sistema de notación"><button id="notationUS" aria-pressed="true" type="button">Americano</button><button id="notationLatin" aria-pressed="false" type="button">Latino</button></div></header><main class="workspace" id="main-content">
 <header class="mission-hero" id="explorar"><div class="eyebrow">Explora · escucha · crea</div><h2>Tu próxima <em>órbita.</em></h2><p>Descubre hacia dónde suena.</p><div class="flight-scene" aria-label="Una nave viaja hacia una galaxia de notas"><svg class="flight-art" viewBox="0 0 620 260" aria-hidden="true"><defs><linearGradient id="flightTrail"><stop stop-color="#108ab1" stop-opacity="0"/><stop offset=".6" stop-color="#06d7a0" stop-opacity=".35"/><stop offset="1" stop-color="#ffd167"/></linearGradient><linearGradient id="shipHull" x2=".7" y2="1"><stop stop-color="#f4fbfc"/><stop offset="1" stop-color="#80bac8"/></linearGradient><radialGradient id="galaxyMist"><stop stop-color="#f04770" stop-opacity=".2"/><stop offset=".55" stop-color="#108ab1" stop-opacity=".1"/><stop offset="1" stop-color="#108ab1" stop-opacity="0"/></radialGradient></defs><ellipse cx="444" cy="116" rx="160" ry="110" fill="url(#galaxyMist)"/><g fill="#c4e5e9"><circle cx="53" cy="56" r="1.5"/><circle cx="176" cy="35" r="1"/><circle cx="284" cy="54" r="1.8"/><circle cx="350" cy="222" r="1"/><circle cx="560" cy="219" r="1.5"/><circle cx="580" cy="37" r="1"/><circle cx="110" cy="225" r="1"/></g><path d="M12 230Q94 238 172 191T327 124" fill="none" stroke="#8dd2d6" stroke-opacity=".24" stroke-dasharray="3 7"/><path d="M38 220Q110 232 189 177" fill="none" stroke="url(#flightTrail)" stroke-width="5" stroke-linecap="round"/><g transform="translate(205 164) rotate(53)"><path d="M-8 27Q0 63 8 27" fill="#ffd167"/><path d="M-4 27Q0 47 4 27" fill="#fff1c6"/><path d="M-13 9L-29 33 -10 28M13 9L29 33 10 28" fill="#f04770"/><path d="M0-40Q24-18 12 27H-12Q-24-18 0-40Z" fill="url(#shipHull)" stroke="#e2f5f6" stroke-width="1.5"/><path d="M0-40Q8-32 12-23H-12Q-8-32 0-40" fill="#f78c6a"/><circle cy="-6" r="8" fill="#103440" stroke="#ffffff" stroke-width="3"/><circle cx="-2" cy="-8" r="2" fill="#06d7a0"/><path d="M-10 26H10" stroke="#108ab1" stroke-width="4" stroke-linecap="round"/></g></svg><div id="heroOrbit" class="hero-orbit" aria-label="Notas del acorde en órbita"></div></div></header>
 <div class="app">
   <section class="band top" id="acorde" aria-label="Teoría del acorde">
@@ -992,6 +1032,17 @@ $('universeBass').addEventListener('change',renderUniverse);
 $('clearUniverse').addEventListener('click',()=>{selectedNotes.clear();renderUniverse();});
 $('hearUniverse').addEventListener('click',()=>playMidi([...selectedNotes].sort((a,b)=>a-b).map(pc=>60+pc),0,true));
 $('universeResults').addEventListener('click',e=>{const b=e.target.closest('[data-match]');if(!b)return;input.value=b.dataset.match;tryInput(true);$('acorde').scrollIntoView({behavior:'smooth',block:'start'});});
+function updateThemeButton(){
+ const light=document.documentElement.dataset.theme==='light';
+ $('themeToggle').textContent=light?'☾ Oscuro':'☀ Claro';
+ $('themeToggle').setAttribute('aria-label',light?'Activar modo oscuro':'Activar modo claro');
+ $('themeToggle').setAttribute('aria-pressed',String(light));
+}
+$('themeToggle').addEventListener('click',()=>{
+ const next=document.documentElement.dataset.theme==='light'?'dark':'light';
+ document.documentElement.dataset.theme=next;store.set('mapa-theme',next);updateThemeButton();
+});
+updateThemeButton();
 const params=new URLSearchParams(location.search);
 const requested=params.get('chord');
 const initialChord=requested&&requested.length<60&&parseChord(requested)?requested:'Cmaj7';
