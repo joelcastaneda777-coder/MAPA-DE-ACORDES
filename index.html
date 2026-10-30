@@ -203,11 +203,25 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 .btn{min-height:44px}
 @media(max-width:540px){.seq-row .remove{min-width:36px;min-height:44px}}
 </style>
+<link rel="stylesheet" href="/cosmic.css">
 </head>
 <body>
-<main id="main-content">
+<div class="space-shell">
+<aside class="sidebar" aria-label="Navegación principal">
+  <a class="brand" href="/" aria-label="Mapa de Acordes, inicio"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">Mapa<br>de Acordes</span></a>
+  <nav class="side-nav" aria-label="Herramientas">
+    <a href="#explorar" class="active"><span class="side-icon" aria-hidden="true">✦</span><span class="nav-label">Explorar</span></a>
+    <a href="#acorde"><span class="side-icon" aria-hidden="true">♬</span><span class="nav-label">Acordes</span></a>
+    <a href="#laboratorio"><span class="side-icon" aria-hidden="true">⌁</span><span class="nav-label">Progresiones</span></a>
+    <a href="#teoria"><span class="side-icon" aria-hidden="true">◎</span><span class="nav-label">Teoría</span></a>
+    <a href="/piano/do-mayor/"><span class="side-icon" aria-hidden="true">▦</span><span class="nav-label">Biblioteca</span></a>
+  </nav>
+  <div class="sidebar-note"><b>Explora.<br>Escucha.<br>Crea.</b><small>Tu universo musical.</small></div>
+</aside>
+<main class="workspace" id="main-content">
+<header class="mission-hero" id="explorar"><div class="eyebrow">Explorador de armonía · Mapa de Acordes</div><h2>Cada acorde<br><em>es un nuevo mundo.</em></h2><p>Explora, escucha y crea tu propio universo musical.</p><span class="orbit-dot" aria-hidden="true"></span></header>
 <div class="app">
-  <section class="band top" aria-label="Teoría del acorde">
+  <section class="band top" id="acorde" aria-label="Teoría del acorde">
     <div class="inner">
       <div>
         <div class="eyebrow">Mapa de Acordes</div>
@@ -218,7 +232,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
           <button class="btn" id="play" type="button"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>Escuchar</button>
         </div>
       </div>
-      <div class="explain">
+      <div class="explain" id="teoria">
         <h2>Cómo se forma</h2>
         <ol class="steps" id="steps"></ol>
         <p class="desc" id="desc"></p>
@@ -286,8 +300,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
     </div>
   </section>
 </div>
-<nav class="band" aria-label="Explorar acordes" style="padding-block:16px;background:var(--bg)"><div class="inner"><strong>Explora acordes:</strong> <a href="/piano/do-mayor/">Do mayor en piano</a> · <a href="/piano/la-menor/">La menor en piano</a> · <a href="/guitarra/sol-mayor/">Sol mayor en guitarra</a> · <a href="/guitarra/la-menor/">La menor en guitarra</a></div></nav>
-<section class="lab" aria-labelledby="labTitle">
+<nav class="band related-nav" aria-label="Explorar acordes"><div class="inner"><strong>Explora acordes:</strong> <a href="/piano/do-mayor/">Do mayor en piano</a> · <a href="/piano/la-menor/">La menor en piano</a> · <a href="/guitarra/sol-mayor/">Sol mayor en guitarra</a> · <a href="/guitarra/la-menor/">La menor en guitarra</a></div></nav>
+<section class="lab" id="laboratorio" aria-labelledby="labTitle">
  <div class="inner">
   <div class="lab-head"><div><div class="eyebrow">Laboratorio armónico</div><h2 id="labTitle">Escucha tu progresión</h2></div><span class="seq-summary" id="seqSummary"></span></div>
   <p>Prueba tus rearmonizaciones. Elige los acordes y cuánto dura cada uno; un tiempo equivale a una negra al tempo indicado.</p>
@@ -305,7 +319,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
   <p class="seq-state" id="seqStatus" role="status" aria-live="polite">Lista para escuchar. Piano y arpa sintetizados con pad; la progresión usa su propio registro de notas.</p>
  </div>
 </section>
+<footer class="space-footer">Mapa de Acordes · Explora el universo de la armonía</footer>
 </main>
+</div>
 
 <script>
 (function(){
