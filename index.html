@@ -585,8 +585,8 @@ function playMidi(list,gap,simultaneous=false){
 /* Guitarra acústica sintetizada: cuerda pulsada Karplus–Strong y cuerpo. */
 function guitarStringBuffer(c,midi){
   const rate=c.sampleRate,freq=440*Math.pow(2,(midi-69)/12);
-  const period=rate/freq,delay=Math.max(2,Math.floor(period-.5)),fraction=period-.5-delay;
-  const buffer=c.createBuffer(1,Math.ceil(rate*3.8),rate),out=buffer.getChannelData(0),ring=new Float32Array(delay+1);
+  const period=rate/freq,delay=Math.max(2,Math.ceil(period-.5)),fraction=delay-(period-.5);
+  const buffer=c.createBuffer(1,Math.ceil(rate*3.8),rate),out=buffer.getChannelData(0),ring=new Float32Array(delay);
   let seed=(midi+1)*7919;
   for(let i=0;i<ring.length;i++){seed=(seed*1664525+1013904223)>>>0;ring[i]=(seed/4294967296*2-1)*.7;}
   let cursor=0,last=0;
