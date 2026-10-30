@@ -309,7 +309,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
           <label class="toggle"><input type="checkbox" id="showAll"> Ver todas las notas del acorde en el mástil</label>
         </div>
         <div class="scroll" style="margin-top:10px"><svg class="fretboard" id="fretboard" preserveAspectRatio="xMinYMid meet" viewBox="0 0 1100 220" role="img" aria-label="Mástil de guitarra"></svg></div>
-        <p id="fretFocusHint" class="use" aria-live="polite" style="font-size:11px;margin:8px 0">Vista centrada en la digitación</p><div class="eyebrow" style="margin:14px 0 8px">Disposiciones</div>
+        <p id="guitarAudioStatus" class="use" role="status" aria-live="polite" style="font-size:11px;margin:8px 0">Guitarra de nylon · muestras de audio</p><p class="use" style="font-size:10px;margin:4px 0">Audio: <a href="https://github.com/gleitz/midi-js-soundfonts" target="_blank" rel="noopener">FluidR3 / MIDI.js Soundfonts</a> · <a href="https://creativecommons.org/licenses/by/3.0/us/" target="_blank" rel="noopener">CC BY 3.0</a> · reproducción con filtro suave y ambiente.</p><p id="fretFocusHint" class="use" aria-live="polite" style="font-size:11px;margin:8px 0">Vista centrada en la digitación</p><div class="eyebrow" style="margin:14px 0 8px">Disposiciones</div>
         <div class="voicings" id="voicings"></div>
       </div>
     </div>
@@ -582,40 +582,48 @@ function playMidi(list,gap,simultaneous=false){
   const timer=setInterval(()=>{flushArpeggio(bus,c.currentTime);if(c.currentTime>t+3){clearInterval(timer);disposeSoundBus(bus);}},25);
 }
 
-/* Guitarra acústica sintetizada: cuerda pulsada Karplus–Strong y cuerpo. */
-function guitarStringBuffer(c,midi){
-  const rate=c.sampleRate,freq=440*Math.pow(2,(midi-69)/12);
-  const period=rate/freq,delay=Math.max(2,Math.ceil(period-.5)),fraction=delay-(period-.5);
-  const buffer=c.createBuffer(1,Math.ceil(rate*3.8),rate),out=buffer.getChannelData(0),ring=new Float32Array(delay);
-  let seed=(midi+1)*7919;
-  for(let i=0;i<ring.length;i++){seed=(seed*1664525+1013904223)>>>0;ring[i]=(seed/4294967296*2-1)*.7;}
-  let cursor=0,last=0;
-  const damping=.9975;
-  for(let i=0;i<out.length;i++){
-    const a=ring[cursor],b=ring[(cursor+1)%ring.length];
-    const sample=a*(1-fraction)+b*fraction;
-    const next=(sample+last)*.5*damping;
-    ring[cursor]=next;last=sample;cursor=(cursor+1)%ring.length;
-    out[i]=sample*Math.min(1,i/(rate*.002))*Math.min(1,(out.length-i)/(rate*.08));
-  }
-  return buffer;
+/* Guitarra de nylon por muestras FluidR3, CC BY 3.0 (créditos bajo el mástil). */
+const nylonCache=new Map();
+let nylonTicket=0;
+function loadNylonNote(c,midi){
+  if(nylonCache.has(midi))return nylonCache.get(midi);
+  const names=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+  const name=names[midi%12]+(Math.floor(midi/12)-1);
+  const url='https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/acoustic_guitar_nylon-mp3/'+name+'.mp3';
+  const pending=(async()=>{
+    const response=await fetch(url,{signal:AbortSignal.timeout(15000)});
+    if(!response.ok)throw Error('Muestra no disponible');
+    return await c.decodeAudioData(await response.arrayBuffer());
+  })().catch(error=>{nylonCache.delete(midi);throw error;});
+  nylonCache.set(midi,pending);return pending;
 }
-function playGuitar(list,simultaneous=false){
+async function playGuitar(list,simultaneous=false){
   const c=ctx();if(!c||!list.length)return;
-  const master=c.createGain(),body=c.createBiquadFilter(),air=c.createBiquadFilter(),cut=c.createBiquadFilter();
-  body.type='peaking';body.frequency.value=190;body.Q.value=.8;body.gain.value=4;
-  air.type='lowpass';air.frequency.value=5200;air.Q.value=.6;
-  cut.type='highpass';cut.frequency.value=65;
-  master.gain.value=.65/Math.sqrt(list.length);master.connect(body);body.connect(air);air.connect(cut);cut.connect(c.destination);
-  const sources=[],start=c.currentTime+.04;
-  list.forEach((m,i)=>{
-    const source=c.createBufferSource(),volume=c.createGain(),time=start+(simultaneous?0:i*.026);
-    source.buffer=guitarStringBuffer(c,m);
-    volume.gain.setValueAtTime(.8,time);volume.gain.exponentialRampToValueAtTime(.001,time+3.7);
-    source.connect(volume);volume.connect(master);source.start(time);sources.push(source);
-    source.onended=()=>{source.disconnect();volume.disconnect();};
-  });
-  setTimeout(()=>{master.disconnect();body.disconnect();air.disconnect();cut.disconnect();},4500);
+  const ticket=++nylonTicket,chord=symbol(),message=$('guitarAudioStatus');
+  message.textContent='Cargando guitarra de nylon…';
+  try{
+    await c.resume();
+    const buffers=await Promise.all(list.map(m=>loadNylonNote(c,m)));
+    if(ticket!==nylonTicket||state.mode!=='guitar'||symbol()!==chord){message.textContent='Guitarra de nylon lista.';return;}
+    const master=c.createGain(),warm=c.createBiquadFilter(),room=c.createDelay(.2),wet=c.createGain();
+    warm.type='lowpass';warm.frequency.value=4200;warm.Q.value=.5;
+    master.gain.value=.72/Math.sqrt(list.length);
+    master.connect(warm);warm.connect(c.destination);warm.connect(room);
+    room.delayTime.value=.085;wet.gain.value=.085;room.connect(wet);wet.connect(c.destination);
+    let remaining=buffers.length;
+    buffers.forEach((buffer,i)=>{
+      const source=c.createBufferSource(),volume=c.createGain(),time=c.currentTime+.045+(simultaneous?0:i*.043);
+      source.buffer=buffer;
+      const duration=Math.min(buffer.duration,5),level=.78-i*.018;
+      volume.gain.setValueAtTime(0,time);
+      volume.gain.linearRampToValueAtTime(level,time+.008);
+      volume.gain.setValueAtTime(level,time+Math.max(.01,duration-.18));
+      volume.gain.linearRampToValueAtTime(0,time+duration);
+      source.connect(volume);volume.connect(master);source.start(time);source.stop(time+duration);
+      source.onended=()=>{source.disconnect();volume.disconnect();if(--remaining===0)setTimeout(()=>{master.disconnect();warm.disconnect();room.disconnect();wet.disconnect();},200);};
+    });
+    message.textContent='Guitarra de nylon · toque suave';
+  }catch(error){if(ticket===nylonTicket)message.textContent='No se pudo cargar la guitarra. Pulsa Escuchar para intentarlo de nuevo.';}
 }
 
 /* ---------- Render ---------- */
