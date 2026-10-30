@@ -204,6 +204,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 @media(max-width:540px){.seq-row .remove{min-width:36px;min-height:44px}}
 </style>
 <link rel="stylesheet" href="/cosmic.css">
+<link rel="stylesheet" href="/cosmic-light.css">
 </head>
 <body>
 <div class="space-shell">
@@ -232,13 +233,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
           <button class="btn" id="play" type="button"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>Escuchar</button>
         </div>
       </div>
-      <div class="explain" id="teoria">
-        <h2>Cómo se forma</h2>
-        <ol class="steps" id="steps"></ol>
-        <p class="desc" id="desc"></p>
-        <p class="use" id="use"></p>
-        <div class="invnote" id="invnote"></div>
-      </div>
+      
     </div>
   </section>
 
@@ -281,7 +276,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
       </div>
 
       <div id="pianoPanel">
-        <div class="scroll"><div class="piano" id="piano"></div></div>
+        <div class="piano-control-row"><div class="piano-octave-buttons" role="group" aria-label="Vista del teclado"><button type="button" id="pianoOct1" aria-pressed="false">1 octava</button><button type="button" id="pianoOct2" aria-pressed="true">2 octavas</button></div><span class="piano-hint" id="pianoHint">Desliza para ver más teclas →</span></div>
+        <div class="scroll piano-scroll" id="pianoScroll" tabindex="0" role="region" aria-label="Teclado de piano, desplaza horizontalmente para ver más teclas"><div class="piano" id="piano"></div></div>
         <p class="use" id="pianoNote" style="margin:10px 0 0"></p>
       </div>
 
@@ -299,6 +295,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
       </div>
     </div>
   </section>
+<section class="theory-card" aria-label="Teoría del acorde"><div class="explain" id="teoria">
+        <h2>Cómo se forma</h2>
+        <ol class="steps" id="steps"></ol>
+        <p class="desc" id="desc"></p>
+        <p class="use" id="use"></p>
+        <div class="invnote" id="invnote"></div>
+      </div></section>
 </div>
 <nav class="band related-nav" aria-label="Explorar acordes"><div class="inner"><strong>Explora acordes:</strong> <a href="/piano/do-mayor/">Do mayor en piano</a> · <a href="/piano/la-menor/">La menor en piano</a> · <a href="/guitarra/sol-mayor/">Sol mayor en guitarra</a> · <a href="/guitarra/la-menor/">La menor en guitarra</a></div></nav>
 <section class="lab" id="laboratorio" aria-labelledby="labTitle">
@@ -614,10 +617,13 @@ function markHTML(t){
   const prim=state.label==='note'?t.name:degLabel(t),sec=state.label==='note'?degLabel(t):t.name;
   return{prim:esc(prim),sec:esc(sec)};
 }
+let pianoOctaves=window.matchMedia('(max-width:650px)').matches?1:2;
 function renderPiano(){
-  const {notes,omitted}=pianoVoicing(),on=new Map(notes.map(v=>[v.pos,v.t]));
-  const W=100/15;let html='',wi=0;const blacks=[];
-  for(let k=0;k<=24;k++){
+  const {notes,omitted}=pianoVoicing();
+  const displayNotes=pianoOctaves===1?notes.map(v=>({...v,pos:v.pos%12})):notes;
+  const on=new Map(displayNotes.map(v=>[v.pos,v.t]));
+  const W=100/(pianoOctaves===1?8:15);let html='',wi=0;const blacks=[];
+  for(let k=0;k<=(pianoOctaves===1?12:24);k++){
     const pc=k%12,isB=[1,3,6,8,10].includes(pc),t=on.get(k),oct=3+Math.floor(k/12);
     if(isB){blacks.push({k,left:wi*W,t});continue;}
     const m=t?markHTML(t):null;
@@ -629,8 +635,13 @@ function renderPiano(){
     html+=`<button type="button" class="bk${b.t?' on':''}" data-k="${b.k}" style="left:calc(${b.left}% - ${W*.31}%);${b.t?'--tone:'+TONE_VAR[b.t.cls]:''}" aria-label="${b.t?esc(b.t.name):'Tecla negra'}">${b.t?`<span class="mark">${m.prim}</span>`:''}</button>`;
   }
   $('piano').innerHTML=html;
+  $('piano').dataset.octaves=String(pianoOctaves);
+  $('piano').style.setProperty('--white-count',pianoOctaves===1?'8':'15');
+  $('pianoOct1').setAttribute('aria-pressed',String(pianoOctaves===1));
+  $('pianoOct2').setAttribute('aria-pressed',String(pianoOctaves===2));
+  $('pianoHint').textContent=pianoOctaves===1?'Vista compacta · todas las notas':'← Desliza el teclado para ver más teclas →';
   const names=notes.map(v=>v.t.name).join(' – ');
-  $('pianoNote').textContent=`De grave a agudo: ${names}.`+(omitted.length?` Se omitió ${omitted.map(o=>'la '+o.deg+'ª').join(' y ')} para que quepa en dos octavas.`:'')+' Toca cualquier tecla para escucharla.';
+  $('pianoNote').textContent=`De grave a agudo: ${names}.`+(omitted.length?` Se omitió ${omitted.map(o=>'la '+o.deg+'ª').join(' y ')} para que quepa en dos octavas.`:'')+' Toca cualquier tecla para escucharla.'+(pianoOctaves===1?' Vista compacta: las notas se agrupan en una octava.':'');
 }
 
 function fx(n){return 60+(1-Math.pow(2,-n/12))/(1-Math.pow(2,-15/12))*1020;}
@@ -747,6 +758,9 @@ function playCurrent(simultaneous=false){
 }
 $('play').addEventListener('click',()=>playCurrent());
 $('playFull').addEventListener('click',()=>playCurrent(true));
+for(const [id,count] of [['pianoOct1',1],['pianoOct2',2]]){
+  $(id).addEventListener('click',()=>{pianoOctaves=count;renderPiano();$('pianoScroll').scrollLeft=0;});
+}
 
 
 /* ---------- Reproductor de progresiones ---------- */
