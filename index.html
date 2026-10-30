@@ -473,6 +473,21 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--c-7);outline-of
 :root[data-theme=light] #sequencePasteDialog{background:linear-gradient(130deg,#fff1f4,#edf9f4);color:#173f4c;border-color:#a9cad1}
 @media(max-width:1000px){#laboratorio #seqRows{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){#laboratorio>.inner{grid-template-columns:minmax(0,1fr);gap:16px}#laboratorio .sequence-main,#laboratorio .seq-sound{grid-column:1;grid-row:auto}#laboratorio .sequence-main{order:2}#laboratorio .seq-footer{order:3}#laboratorio .seq-sound{order:4}#laboratorio .harmony-coach{order:5}#laboratorio .seq-state{order:6}#laboratorio>.inner>p:first-of-type{order:1}#laboratorio .seq-sound .sound-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}#laboratorio .seq-sound .sound-panel label:nth-of-type(-n+3){grid-column:1/-1}#laboratorio .seq-sound .sound-panel label:nth-of-type(4){padding-top:0;border-top:0}}
+</style><style>
+/* Mezcla horizontal: cada control ocupa solo la altura necesaria. */
+#laboratorio>.inner{grid-template-columns:minmax(0,1fr);align-items:start}
+#laboratorio .sequence-main{grid-column:1;grid-row:auto}
+#laboratorio .seq-sound{grid-column:1/-1;grid-row:auto;order:0;display:grid;grid-template-columns:130px minmax(0,1fr);align-items:start;gap:16px 22px;width:100%;height:auto!important;min-height:0!important;padding:18px 20px;border-radius:18px;background:linear-gradient(110deg,#f0477010,#ffffff07 35%,#06d7a016);box-sizing:border-box}
+#laboratorio .sound-direct-head{padding:0;align-self:center}
+#laboratorio .sound-direct-head h3{font-size:16px}
+#laboratorio .seq-sound .sound-panel{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(130px,1.1fr) minmax(130px,1.1fr);grid-template-rows:auto;align-items:start;align-content:start;gap:18px;height:auto!important;min-height:0!important;margin:0;padding:0;border:0;min-width:0}
+#laboratorio .seq-sound .sound-panel label{display:grid!important;grid-column:auto!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:18px 38px;align-items:center;align-content:start;gap:5px;height:auto!important;min-height:0!important;margin:0;padding:0!important;border:0!important}
+#laboratorio .seq-sound .sound-panel input[type=range]{height:18px!important;min-height:0!important;align-self:center;width:100%;margin:0!important;padding:0!important}
+#laboratorio .seq-sound .sound-panel select{height:38px;min-height:38px;width:100%;padding:7px 9px;box-sizing:border-box}
+#laboratorio .seq-sound>.seq-help{grid-column:2;font-size:10px;line-height:1.5;margin:0}
+#laboratorio #seqRows{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1000px){#laboratorio .seq-sound{grid-template-columns:minmax(0,1fr)}#laboratorio .sound-direct-head{flex-direction:row;align-items:baseline;gap:10px}#laboratorio .seq-sound>.seq-help{grid-column:1}#laboratorio .seq-sound .sound-panel{gap:12px;grid-template-columns:repeat(3,minmax(0,1fr))}#laboratorio .seq-sound .sound-panel label:nth-of-type(n+4){grid-column:auto!important}}
+@media(max-width:650px){#laboratorio .seq-sound{order:4;padding:15px;gap:12px}#laboratorio .seq-sound .sound-panel{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px 10px}#laboratorio .seq-sound .sound-panel label:nth-of-type(-n+3){grid-column:span 2!important}#laboratorio .seq-sound .sound-panel label:nth-of-type(n+4){grid-column:span 3!important}#laboratorio .seq-sound .sound-panel label{font-size:11px;grid-template-rows:17px 34px}#laboratorio .seq-sound .sound-panel label output{font-size:10px}#laboratorio .seq-sound .sound-panel select{font-size:11px}#laboratorio #seqRows{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head>
 <body>
 <div class="space-shell">
