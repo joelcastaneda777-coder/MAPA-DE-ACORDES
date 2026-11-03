@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="es">
 <head>
+<script src="/analytics.js" defer></script>
+
 <meta charset="utf-8">
 <script>
 (function(){try{const saved=localStorage.getItem('mapa-theme');document.documentElement.dataset.theme=saved==='light'||saved==='dark'?saved:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}catch(e){document.documentElement.dataset.theme='dark';}})();
@@ -1163,14 +1165,14 @@ function tryInput(showErr){
   if(showErr&&v.trim()){status.textContent=`No reconozco «${v.trim()}». Prueba con C, Am7, F#m7b5, Bbmaj9, G/B o Sol7.`;status.classList.add('warn');}
 }
 input.addEventListener('input',()=>tryInput(false));
-$('form').addEventListener('submit',e=>{e.preventDefault();tryInput(true);input.select();});
+$('form').addEventListener('submit',e=>{e.preventDefault();tryInput(true);if(parseChord(input.value))window.mapaTrack?.('chord_search');input.select();});
 input.addEventListener('blur',()=>tryInput(true));
 
 const chips=$('chips');
 EXAMPLES.forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=c;b.addEventListener('click',()=>{input.value=c;tryInput(true);});chips.appendChild(b);});
 
-$('mPiano').addEventListener('click',()=>{state.mode='piano';store.set('mapa-mode','piano');render();});
-$('mGuitar').addEventListener('click',()=>{state.mode='guitar';store.set('mapa-mode','guitar');render();});
+$('mPiano').addEventListener('click',()=>{state.mode='piano';store.set('mapa-mode','piano');render();window.mapaTrack?.('instrument_select',{instrument:'piano'});});
+$('mGuitar').addEventListener('click',()=>{state.mode='guitar';store.set('mapa-mode','guitar');render();window.mapaTrack?.('instrument_select',{instrument:'guitar'});});
 $('lNote').addEventListener('click',()=>{state.label='note';store.set('mapa-label','note');render();});
 $('lDeg').addEventListener('click',()=>{state.label='deg';store.set('mapa-label','deg');render();});
 $('inv').addEventListener('click',()=>{if(state.extraBass)return;state.inv=(state.inv+1)%state.tones.length;state.vIdx=null;vCache=null;render();});
@@ -1236,7 +1238,7 @@ async function startSequence(){
   const ticket=seqTicket;$('seqPlay').disabled=true;$('seqStop').disabled=false;
   try{await c.resume();if(ticket!==seqTicket)return;if(c.state!=='running')throw Error();}catch(e){if(ticket===seqTicket){stopSequence(false);seqMessage('No se pudo iniciar el audio. Vuelve a pulsar reproducir.',true);}return;}
   saveSequence();
-  const run={...makeSoundBus(c),bpm,index:0,nextTime:c.currentTime+.08,events:[],timer:null,loop:$('seqLoop').checked,done:false,active:-1};updateSoundBus(run);seqRun=run;
+  const run={...makeSoundBus(c),bpm,index:0,nextTime:c.currentTime+.08,events:[],timer:null,loop:$('seqLoop').checked,done:false,active:-1};updateSoundBus(run);seqRun=run;window.mapaTrack?.('progression_start',{steps:entries.length,bpm,meter:$('seqMeter').value});
   const steps=entries.map(e=>({...e,seconds:sequenceSeconds(e,bpm),notes:sequenceRowMidi(e),arpCore:sequenceArpCore(e)}));
   run.steps=steps;run.meter=$('seqMeter').value;
   function tick(){
